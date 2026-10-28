@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synqora — AI Skill Assessment Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .sidebar-logo {
+      width: 36px !important;
+      height: 36px !important;
+      max-width: 36px !important;
+    }
+    .content-body {
+      padding: 1.8rem 2.5rem !important;
+    }
+    /* 1. ANALYTICS STATS BAR */
+    .stats-summary-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      background: #131B2E;
+      border: 1px solid #24324D;
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .stat-icon-bg {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #00F0FF;
+    }
+    .stat-val {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #FFF;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-lbl {
+      font-size: 0.75rem;
+      color: #A0AEC0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    /* 2. SEARCH & FILTER CONTROLS */
+    .controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+    }
+    .filter-pills {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .pill-btn {
+      background: #131B2E;
+      border: 1px solid #24324D;
+      color: #A0AEC0;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .pill-btn:hover, .pill-btn.active {
+      background: rgba(0, 240, 255, 0.12);
+      border-color: #00F0FF;
+      color: #00F0FF;
+    }
+    .search-input-box {
+      background: #131B2E;
+      border: 1px solid #24324D;
+      color: #FFF;
+      padding: 0.55rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      outline: none;
+      width: 240px;
+      transition: border-color 0.2s ease;
+    }
+    .search-input-box:focus {
+      border-color: #00F0FF;
+    }
+    .btn-add-skill {
+      background: #131B2E;
+      border: 1px solid #00F0FF;
+      color: #00F0FF;
+      font-weight: 700;
+      padding: 0.6rem 1.1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-add-skill:hover {
+      background: rgba(0, 240, 255, 0.12);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+    }
+    /* 3. SKILL CARDS GRID */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .skill-card {
+      background: #131B2E;
+      border: 1px solid #24324D;
+      border-radius: 18px;
+      padding: 1.6rem;
+      transition: all 0.25s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .skill-card:hover {
+      border-color: #00F0FF;
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(0, 240, 255, 0.15);
+    }
+    .status-badge {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+    .status-verified {
+      background: rgba(0, 255, 135, 0.15);
+      border: 1px solid #00FF87;
+      color: #00FF87;
+    }
+    .status-ready {
+      background: rgba(0, 240, 255, 0.15);
+      border: 1px solid #00F0FF;
+      color: #00F0FF;
+    }
+    .skill-icon {
+      font-size: 2.2rem;
+      margin-bottom: 0.85rem;
+    }
+    .skill-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #FFF;
+      margin: 0 0 0.5rem 0;
+    }
+    .skill-desc {
+      color: #A0AEC0;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      font-size: 0.75rem;
+      color: #A0AEC0;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .btn-start-test {
+      background: linear-gradient(135deg, #00F0FF 0%, #00FF87 100%);
+      color: #080C14;
+      font-weight: 800;
+      border: none;
+      padding: 0.8rem;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      width: 100%;
+      transition: all 0.2s ease;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+      box-sizing: border-box;
+    }
+    .btn-start-test:hover {
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+    }
+    .btn-view-passport {
+      background: #090D16;
+      border: 1px solid #00FF87;
+      color: #00FF87;
+      font-weight: 800;
+      padding: 0.8rem;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+    .btn-view-passport:hover {
+      background: rgba(0, 255, 135, 0.12);
+      box-shadow: 0 0 20px rgba(0, 255, 135, 0.3);
+    }
+    /* 4. PASSPORT VERIFICATION SEARCH BOX */
+    .verify-box-card {
+      background: linear-gradient(135deg, #131B2E 0%, #182238 100%);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 18px;
+      padding: 1.75rem;
+      margin-top: 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+    }
+    .verify-input-group {
+      display: flex;
+      gap: 0.75rem;
+      flex: 1;
+      min-width: 260px;
+      max-width: 450px;
+    }
+    /* MODAL OVERLAY FOR ADD SKILL */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(8, 11, 17, 0.92);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .modal-content {
+      background: #131B2E;
+      border: 1px solid #00F0FF;
+      border-radius: 20px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 450px;
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.2);
+    }
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: #A0AEC0;
+      font-weight: 700;
+      margin-bottom: 0.45rem;
+    }
+    .form-control {
+      width: 100%;
+      background: #090D16;
+      border: 1px solid #24324D;
+      color: #FFF;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .form-control:focus {
+      border-color: #00F0FF;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- LEFT SIDEBAR -->
+    <aside class="app-sidebar">
+      <a href="dashboard.html" class="sidebar-brand">
+        <svg class="sidebar-logo" viewBox="0 0 100 100" fill="none">
+          <polygon points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5" stroke="#00F0FF" stroke-width="6" fill="rgba(0, 240, 255, 0.12)"/>
+          <polygon points="50,20 75,34.5 75,65.5 50,80 25,65.5 25,34.5" stroke="#00FF87" stroke-width="4" fill="none"/>
+          <circle cx="50" cy="50" r="9" fill="#00F0FF"/>
+        </svg>
+        <span class="sidebar-title">SYNQORA</span>
+      </a>
+
+      <ul class="sidebar-menu">
+        <li class="nav-item">
+          <a href="dashboard.html">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="profile.html">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            My Profile
+          </a>
+        </li>
+        <li class="nav-item active">
+          <a href="skills.html">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            My Skills
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="projects.html">
+            <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            My Projects
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="teammates.html">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Find Teammates
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="requests.html">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Requests
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="chat.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            SyncSpace Chat
+          </a>
+        </li>
+        <li class="nav-item" id="adminNavLink" style="display: none;">
+          <a href="admin-dashboard.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Admin Console
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-bottom">
+        <li class="nav-item" style="list-style: none;">
+          <a href="login.html" onclick="localStorage.removeItem('synqora_user'); localStorage.removeItem('synqora_token');" style="color: #FF3366;">
+            <svg viewBox="0 0 24 24" style="stroke: #FF3366;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Logout
+          </a>
+        </li>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="app-main">
+      <header class="app-topbar">
+        <div>
+          <h2 class="topbar-title">AI Skill Assessment Hub</h2>
+          <p style="font-size: 0.85rem; color: #A0AEC0;">Pass 2-round AI evaluations to unlock cryptographically signed Skill Passports.</p>
+        </div>
+        <div class="topbar-actions">
+          <button onclick="openAddSkillModal()" class="btn-add-skill">
+            <span>+ Add Custom Skill</span>
+          </button>
+          <div class="user-profile-badge">
+            <div class="user-avatar" id="topAvatar">AT</div>
+            <span class="user-name" id="topUserName">Abhishek T.</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <!-- 1. ANALYTICS SUMMARY BAR -->
+        <section class="stats-summary-bar">
+          <div class="stat-item">
+            <div class="stat-icon-bg">🛡️</div>
+            <div>
+              <div class="stat-val" id="activePassportsVal">0 Active</div>
+              <div class="stat-lbl">Verified Passports</div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon-bg">🎯</div>
+            <div>
+              <div class="stat-val">80% Min</div>
+              <div class="stat-lbl">Passing Benchmark</div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon-bg">🔒</div>
+            <div>
+              <div class="stat-val">100% Clean</div>
+              <div class="stat-lbl">Proctoring Health</div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon-bg">⚡</div>
+            <div>
+              <div class="stat-val">Groq AI</div>
+              <div class="stat-lbl">Question Engine</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. CONTROLS: CATEGORY PILLS + SEARCH -->
+        <div class="controls-row">
+          <div class="filter-pills">
+            <button class="pill-btn active" onclick="filterSkills('all', this)">All Protocols</button>
+            <button class="pill-btn" onclick="filterSkills('backend', this)">Backend & APIs</button>
+            <button class="pill-btn" onclick="filterSkills('database', this)">Databases</button>
+            <button class="pill-btn" onclick="filterSkills('cs', this)">Core CS</button>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <input type="text" class="search-input-box" id="skillSearchInput" placeholder="Search skill..." oninput="searchSkillCards()">
+          </div>
+        </div>
+
+        <!-- 3. SKILLS GRID -->
+        <div class="skills-grid" id="skillsGrid">
+          <!-- PYTHON -->
+          <div class="skill-card" data-category="backend" id="card-python">
+            <span class="status-badge status-ready" id="badge-python">AI READY</span>
+            <div>
+              <div class="skill-icon">🐍</div>
+              <h3 class="skill-title">Python Core & OOP</h3>
+              <p class="skill-desc">Data structures, decorators, generators, memory management, and Big-O efficiency.</p>
+            </div>
+            <div id="btn-container-python">
+              <div class="card-meta">
+                <span>⏱ 20 Mins</span>
+                <span>🎯 80% Cutoff</span>
+              </div>
+              <a href="test-runner.html?skill=Python" class="btn-start-test">Start Assessment →</a>
+            </div>
+          </div>
+
+          <!-- MYSQL -->
+          <div class="skill-card" data-category="database" id="card-mysql">
+            <span class="status-badge status-ready" id="badge-mysql">AI READY</span>
+            <div>
+              <div class="skill-icon">🗄️</div>
+              <h3 class="skill-title">MySQL & Databases</h3>
+              <p class="skill-desc">Relational design, indexing, complex joins, transactions, and query optimization.</p>
+            </div>
+            <div id="btn-container-mysql">
+              <div class="card-meta">
+                <span>⏱ 20 Mins</span>
+                <span>🎯 80% Cutoff</span>
+              </div>
+              <a href="test-runner.html?skill=MySQL" class="btn-start-test">Start Assessment →</a>
+            </div>
+          </div>
+
+          <!-- DATA STRUCTURES -->
+          <div class="skill-card" data-category="cs" id="card-dsa">
+            <span class="status-badge status-ready" id="badge-dsa">AI READY</span>
+            <div>
+              <div class="skill-icon">🧠</div>
+              <h3 class="skill-title">Data Structures & Algo</h3>
+              <p class="skill-desc">Trees, graphs, linked lists, dynamic programming, and space-time trade-offs.</p>
+            </div>
+            <div id="btn-container-dsa">
+              <div class="card-meta">
+                <span>⏱ 20 Mins</span>
+                <span>🎯 80% Cutoff</span>
+              </div>
+              <a href="test-runner.html?skill=Data%20Structures" class="btn-start-test">Start Assessment →</a>
+            </div>
+          </div>
+
+          <!-- FASTAPI -->
+          <div class="skill-card" data-category="backend" id="card-fastapi">
+            <span class="status-badge status-ready" id="badge-fastapi">AI READY</span>
+            <div>
+              <div class="skill-icon">⚡</div>
+              <h3 class="skill-title">FastAPI & REST APIs</h3>
+              <p class="skill-desc">Async IO, Pydantic validation, JWT auth, dependency injection, and endpoint security.</p>
+            </div>
+            <div id="btn-container-fastapi">
+              <div class="card-meta">
+                <span>⏱ 20 Mins</span>
+                <span>🎯 80% Cutoff</span>
+              </div>
+              <a href="test-runner.html?skill=FastAPI" class="btn-start-test">Start Assessment →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. INSTANT VERIFICATION SEARCH BOX -->
+        <div class="verify-box-card">
+          <div>
+            <h3 style="margin: 0 0 0.35rem 0; font-size: 1.15rem; color: #FFF;">Verify Any Synqora Skill Passport</h3>
+            <p style="margin: 0; font-size: 0.85rem; color: #A0AEC0;">Enter authenticity hash or candidate passport key for instant cryptographic verification.</p>
+          </div>
+          <div class="verify-input-group">
+            <input type="text" class="search-input-box" id="verifyHashInput" placeholder="e.g. SYNQ-0x8F2A9C4E7B" style="flex: 1; width: auto;">
+            <button onclick="verifyPassportHash()" class="btn-add-skill" style="background: #00F0FF; color: #080C14; border: none; font-weight: 800;">Verify</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ADD SKILL MODAL -->
+  <div class="modal-overlay" id="addSkillModal">
+    <div class="modal-content">
+      <h2 style="margin: 0 0 1.25rem 0; color: #FFF; font-size: 1.35rem;">Add Custom Skill Protocol</h2>
+      
+      <div class="form-group">
+        <label>Skill Name</label>
+        <input type="text" id="newSkillName" class="form-control" placeholder="e.g. Docker / React / Machine Learning">
+      </div>
+      <div class="form-group">
+        <label>Select Emoji Icon</label>
+        <input type="text" id="newSkillIcon" class="form-control" placeholder="e.g. 🚀" value="🚀">
+      </div>
+      <div class="form-group">
+        <label>Short Description</label>
+        <input type="text" id="newSkillDesc" class="form-control" placeholder="Key topics covered in assessment">
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+        <button onclick="closeAddSkillModal()" class="btn-add-skill" style="flex: 1; border-color: #24324D; color: #FFF; justify-content: center;">Cancel</button>
+        <button onclick="saveNewSkill()" class="btn-start-test" style="flex: 1;">Create Protocol</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:5000';
+    let currentUserId = 1;
+    const token = localStorage.getItem('synqora_token');
+    const storedUser = localStorage.getItem('synqora_user');
+
+    if (storedUser) {
+      try {
+        const u = JSON.parse(storedUser);
+        if (u && u.id) currentUserId = u.id;
+        if (u && u.full_name) {
+          document.getElementById('topUserName').innerText = u.full_name;
+          const parts = u.full_name.trim().split(' ');
+          const initials = parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : u.full_name.substring(0, 2).toUpperCase();
+          document.getElementById('topAvatar').innerText = initials;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function renderCustomSkills() {
+      const saved = JSON.parse(localStorage.getItem('synqora_custom_skills') || '[]');
+      const grid = document.getElementById('skillsGrid');
+      saved.forEach(s => {
+        const slug = s.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (document.getElementById(`card-${slug}`)) return;
+        const cardHtml = `
+          <div class="skill-card" data-category="backend" id="card-${slug}">
+            <span class="status-badge status-ready" id="badge-${slug}">AI READY</span>
+            <div>
+              <div class="skill-icon">${s.icon || '🚀'}</div>
+              <h3 class="skill-title">${s.name}</h3>
+              <p class="skill-desc">${s.desc}</p>
+            </div>
+            <div id="btn-container-${slug}">
+              <div class="card-meta">
+                <span>⏱ 20 Mins</span>
+                <span>🎯 80% Cutoff</span>
+              </div>
+              <a href="test-runner.html?skill=${encodeURIComponent(s.name)}" class="btn-start-test">Start Assessment →</a>
+            </div>
+          </div>
+        `;
+        grid.insertAdjacentHTML('beforeend', cardHtml);
+      });
+    }
+
+    async function loadUserSkillStatus() {
+      renderCustomSkills();
+      if (!token) return;
+      try {
+        const response = await fetch(`${API_BASE}/api/user/${currentUserId}/profile`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await response.json();
+
+        if (result.success) {
+          const passports = result.passports || [];
+          document.getElementById('activePassportsVal').innerText = `${passports.length} Active`;
+
+          passports.forEach(p => {
+            const skillNameLower = p.skill_name.toLowerCase();
+            let cardKey = skillNameLower.replace(/[^a-z0-9]/g, '');
+            if (skillNameLower.includes('python')) cardKey = 'python';
+            else if (skillNameLower.includes('mysql')) cardKey = 'mysql';
+            else if (skillNameLower.includes('data') || skillNameLower.includes('dsa')) cardKey = 'dsa';
+            else if (skillNameLower.includes('fastapi')) cardKey = 'fastapi';
+
+            const badge = document.getElementById(`badge-${cardKey}`);
+            const btnContainer = document.getElementById(`btn-container-${cardKey}`);
+
+            if (badge) {
+              badge.className = 'status-badge status-verified';
+              badge.innerText = `✓ VERIFIED (${parseFloat(p.score_percentage).toFixed(0)}%)`;
+            }
+            if (btnContainer) {
+              btnContainer.innerHTML = `
+                <div class="card-meta">
+                  <span>🏆 ${p.grade}</span>
+                  <span>📊 ${p.roster_rank}</span>
+                </div>
+                <a href="passport.html?hash=${p.hash_key}" class="btn-view-passport">View Skill Passport →</a>
+              `;
+            }
+          });
+        }
+      } catch (err) {
+        console.error("Backend fetch error:", err);
+      }
+    }
+
+    function filterSkills(cat, btn) {
+      document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cards = document.querySelectorAll('.skill-card');
+      cards.forEach(c => {
+        if (cat === 'all' || c.getAttribute('data-category') === cat) {
+          c.style.display = 'flex';
+        } else {
+          c.style.display = 'none';
+        }
+      });
+    }
+
+    function searchSkillCards() {
+      const q = document.getElementById('skillSearchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('.skill-card');
+      cards.forEach(c => {
+        const title = c.querySelector('.skill-title').innerText.toLowerCase();
+        const desc = c.querySelector('.skill-desc').innerText.toLowerCase();
+        if (title.includes(q) || desc.includes(q)) {
+          c.style.display = 'flex';
+        } else {
+          c.style.display = 'none';
+        }
+      });
+    }
+
+    async function verifyPassportHash() {
+      const hash = document.getElementById('verifyHashInput').value.trim();
+      if (!hash) {
+        alert('Please enter a Passport Hash key to verify.');
+        return;
+      }
+      try {
+        const response = await fetch(`${API_BASE}/api/passport/${encodeURIComponent(hash)}`);
+        const result = await response.json();
+        if (result.success) {
+          const d = result.data;
+          alert(`✅ VERIFIED PASSPORT!\nCandidate: ${d.full_name}\nSkill: ${d.skill_name}\nScore: ${d.score_percentage}%\nStatus: ${d.proctoring_status}`);
+          window.location.href = `passport.html?hash=${encodeURIComponent(hash)}`;
+        } else {
+          alert('❌ Invalid or Unverified Passport Hash!');
+        }
+      } catch (e) {
+        alert('Server connection error during verification.');
+      }
+    }
+
+    function openAddSkillModal() {
+      document.getElementById('addSkillModal').style.display = 'flex';
+    }
+    function closeAddSkillModal() {
+      document.getElementById('addSkillModal').style.display = 'none';
+    }
+    function saveNewSkill() {
+      const name = document.getElementById('newSkillName').value.trim();
+      const icon = document.getElementById('newSkillIcon').value.trim() || '🚀';
+      const desc = document.getElementById('newSkillDesc').value.trim() || 'Custom AI-generated technical protocol.';
+
+      if (!name) {
+        alert('Please enter a Skill Name!');
+        return;
+      }
+
+      const saved = JSON.parse(localStorage.getItem('synqora_custom_skills') || '[]');
+      saved.push({ name, icon, desc });
+      localStorage.setItem('synqora_custom_skills', JSON.stringify(saved));
+
+      renderCustomSkills();
+      closeAddSkillModal();
+      document.getElementById('newSkillName').value = '';
+      document.getElementById('newSkillDesc').value = '';
+    }
+
+    window.addEventListener('DOMContentLoaded', loadUserSkillStatus);
+  </script>
+  <script src="js/app.js"></script>
+</body>
+</html>

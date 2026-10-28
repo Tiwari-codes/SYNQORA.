@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synqora — My Projects & Rosters</title>
+  
+  <!-- GLOBAL CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    .sidebar-logo {
+      width: 36px !important;
+      height: 36px !important;
+      max-width: 36px !important;
+    }
+
+    .content-body {
+      padding: 1.8rem 2.5rem !important;
+    }
+
+    /* TOP STATUS FILTER TABS */
+    .project-tabs-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.75rem;
+      border-bottom: 1px solid #24324D;
+      padding-bottom: 0.85rem;
+    }
+
+    .tab-btn {
+      background: #131B2E;
+      border: 1px solid #24324D;
+      color: #A0AEC0;
+      padding: 0.55rem 1.1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background: rgba(0, 240, 255, 0.12);
+      border-color: #00F0FF;
+      color: #00F0FF;
+    }
+
+    .tab-count {
+      background: #090D16;
+      border: 1px solid #24324D;
+      padding: 0.1rem 0.45rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* PROJECTS GRID */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: #131B2E;
+      border: 1px solid #24324D;
+      border-radius: 18px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+    }
+
+    .project-card:hover {
+      border-color: #00F0FF;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 240, 255, 0.15);
+    }
+
+    .project-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 0.35rem;
+    }
+
+    .project-desc {
+      font-size: 0.85rem;
+      color: #A0AEC0;
+      line-height: 1.5;
+      margin-bottom: 0.85rem;
+    }
+
+    /* TECH STACK PILLS */
+    .tech-pill {
+      background: rgba(0, 240, 255, 0.1);
+      color: #00F0FF;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-block;
+      margin-right: 0.3rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .card-options-btn {
+      background: none;
+      border: none;
+      color: #A0AEC0;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .card-options-btn:hover {
+      background: #090D16;
+      color: #00F0FF;
+    }
+
+    /* DETAILED ROSTER MEMBERS SLOTS */
+    .roster-slot-item {
+      background: #090D16;
+      border: 1px solid #24324D;
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+
+    .member-info {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .member-avatar-mini {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00F0FF 0%, #0072FF 100%);
+      color: #000;
+      font-weight: 800;
+      font-size: 0.72rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slot-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    .slot-subtitle {
+      font-size: 0.75rem;
+      color: #A0AEC0;
+    }
+
+    .badge-assigned {
+      background: rgba(0, 255, 135, 0.12);
+      color: #00FF87;
+      border: 1px solid rgba(0, 255, 135, 0.3);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .btn-post-project {
+      background: linear-gradient(135deg, #7C3AED 0%, #00F0FF 100%) !important;
+      color: #FFFFFF !important;
+      font-weight: 800 !important;
+      padding: 0.65rem 1.25rem !important;
+      border-radius: 12px !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      box-shadow: 0 0 20px rgba(124, 58, 237, 0.4) !important;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.25s ease;
+      text-decoration: none;
+    }
+
+    .btn-action-glow {
+      background: linear-gradient(135deg, #00F0FF 0%, #00FF87 100%) !important;
+      color: #000000 !important;
+      font-weight: 800 !important;
+      padding: 0.75rem;
+      border-radius: 12px;
+      text-align: center;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      display: block;
+      margin-top: 1rem;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+    }
+
+    .btn-action-glow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(9, 13, 22, 0.88);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal-box {
+      background: #131B2E;
+      border: 1px solid #00F0FF;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 500px;
+      padding: 1.75rem;
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.25);
+    }
+
+    .form-group-item {
+      margin-bottom: 1rem;
+    }
+
+    .form-label-text {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #A0AEC0;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-input-field {
+      width: 100%;
+      background: #090D16;
+      border: 1px solid #24324D;
+      color: #FFFFFF;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .form-input-field:focus {
+      border-color: #00F0FF;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+        <!-- LEFT SIDEBAR -->
+    <aside class="app-sidebar">
+      <a href="dashboard.html" class="sidebar-brand">
+        <svg class="sidebar-logo" viewBox="0 0 100 100" fill="none">
+          <polygon points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5" stroke="#00F0FF" stroke-width="6" fill="rgba(0, 240, 255, 0.12)"/>
+          <polygon points="50,20 75,34.5 75,65.5 50,80 25,65.5 25,34.5" stroke="#00FF87" stroke-width="4" fill="none"/>
+          <circle cx="50" cy="50" r="9" fill="#00F0FF"/>
+        </svg>
+        <span class="sidebar-title">SYNQORA</span>
+      </a>
+
+      <ul class="sidebar-menu">
+        <li class="nav-item">
+          <a href="dashboard.html">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="profile.html">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            My Profile
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="skills.html">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            My Skills
+          </a>
+        </li>
+        <li class="nav-item active">
+          <a href="projects.html">
+            <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            My Projects
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="teammates.html">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Find Teammates
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="requests.html">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Requests
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="chat.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            SyncSpace Chat
+          </a>
+        </li>
+        <li class="nav-item" id="adminNavLink" style="display: none;">
+          <a href="admin-dashboard.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Admin Console
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-bottom">
+        <li class="nav-item" style="list-style: none;">
+          <a href="login.html" onclick="localStorage.removeItem('synqora_user'); localStorage.removeItem('synqora_token');" style="color: #FF3366;">
+            <svg viewBox="0 0 24 24" style="stroke: #FF3366;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Logout
+          </a>
+        </li>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="app-main">
+      <header class="app-topbar">
+        <div>
+          <h2 class="topbar-title">Project Roster Management</h2>
+          <p style="font-size: 0.85rem; color: #A0AEC0;">Manage active team projects and recruit skill-verified student engineers.</p>
+        </div>
+
+        <div class="topbar-actions">
+          <button onclick="openCreateProjectModal()" class="btn-post-project">
+            <span>+ Create New Project</span>
+          </button>
+          <div class="user-profile-badge">
+            <div class="user-avatar" id="topAvatar">AT</div>
+            <span class="user-name" id="topUserName">Abhishek T.</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-body">
+        
+        <!-- PROJECT STATUS FILTER TABS -->
+        <div class="project-tabs-bar">
+          <button class="tab-btn active" onclick="filterProjects('all', this)">All Projects <span class="tab-count">2</span></button>
+          <button class="tab-btn" onclick="filterProjects('active', this)">Active Rosters <span class="tab-count">1</span></button>
+          <button class="tab-btn" onclick="filterProjects('planning', this)">In Planning <span class="tab-count">1</span></button>
+        </div>
+
+        <!-- PROJECTS GRID -->
+        <div class="projects-grid" id="projectsGrid">
+          
+          <!-- PROJECT 1: SYNQORA -->
+          <div class="project-card" data-status="active">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem;">
+                <div>
+                  <h3 class="project-title">Synqora Platform</h3>
+                  <span class="badge badge-verified" style="margin-top: 0.2rem; background: rgba(0,255,135,0.12); color: #00FF87; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700;">ACTIVE ROSTER</span>
+                </div>
+                <button class="card-options-btn" onclick="alert('Project Actions: Edit, Roster Settings, Archive')" title="More Options">⋮</button>
+              </div>
+
+              <p class="project-desc">AI-backed student team building and skill verification SaaS platform.</p>
+
+              <div>
+                <span class="tech-pill">Python</span>
+                <span class="tech-pill">FastAPI</span>
+                <span class="tech-pill">React</span>
+                <span class="tech-pill">MySQL</span>
+              </div>
+
+              <div style="font-size: 0.8rem; color: #A0AEC0; font-weight: 700; margin-bottom: 0.65rem;">Team Roster Members:</div>
+
+              <!-- SLOT 1: LEAD (YOU) -->
+              <div class="roster-slot-item">
+                <div class="member-info">
+                  <div class="member-avatar-mini" id="myAvatarMini">AT</div>
+                  <div>
+                    <div class="slot-title" id="myRosterName">Abhishek Tiwari (You)</div>
+                    <div class="slot-subtitle">Lead Architect</div>
+                  </div>
+                </div>
+                <span class="badge-assigned">✓ ASSIGNED</span>
+              </div>
+
+              <!-- ACCEPTED MEMBERS CONTAINER FOR SYNQORA -->
+              <div id="synqoraMembersContainer"></div>
+            </div>
+
+            <a href="teammates.html" class="btn-action-glow">Recruit Missing Teammates 🔍</a>
+          </div>
+
+          <!-- PROJECT 2: OUTFIT ORACLE -->
+          <div class="project-card" data-status="planning">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem;">
+                <div>
+                  <h3 class="project-title">Outfit Oracle</h3>
+                  <span class="badge badge-pending" style="margin-top: 0.2rem; background: rgba(255,184,0,0.12); color: #FFB800; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700;">IN PLANNING</span>
+                </div>
+                <button class="card-options-btn" onclick="alert('Project Actions: Edit, Roster Settings, Archive')" title="More Options">⋮</button>
+              </div>
+
+              <p class="project-desc">Smart wardrobe styling and outfit recommendation engine for university students.</p>
+
+              <div>
+                <span class="tech-pill">Python</span>
+                <span class="tech-pill">OpenCV</span>
+                <span class="tech-pill">Tailwind</span>
+              </div>
+
+              <div style="font-size: 0.8rem; color: #A0AEC0; font-weight: 700; margin-bottom: 0.65rem;">Team Roster Members:</div>
+
+              <div class="roster-slot-item">
+                <div class="member-info">
+                  <div class="member-avatar-mini">AT</div>
+                  <div>
+                    <div class="slot-title">Abhishek Tiwari (You)</div>
+                    <div class="slot-subtitle">Project Lead</div>
+                  </div>
+                </div>
+                <span class="badge-assigned">✓ ASSIGNED</span>
+              </div>
+
+              <!-- ACCEPTED MEMBERS CONTAINER FOR OUTFIT ORACLE -->
+              <div id="outfitMembersContainer"></div>
+            </div>
+
+            <a href="teammates.html" class="btn-action-glow">Recruit Missing Teammates 🔍</a>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- CREATE PROJECT MODAL -->
+  <div class="modal-overlay" id="createProjectModal">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #24324D; padding-bottom: 0.75rem;">
+        <h3 style="color: #FFF; font-weight: 800;">Create New Project Roster</h3>
+        <button onclick="closeCreateProjectModal()" style="background: none; border: none; color: #A0AEC0; font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <div class="form-group-item">
+        <label class="form-label-text">Project Title</label>
+        <input type="text" id="newProjectTitle" class="form-input-field" placeholder="e.g. AI Code Assistant">
+      </div>
+
+      <div class="form-group-item">
+        <label class="form-label-text">Tech Stack (Comma Separated)</label>
+        <input type="text" id="newProjectTech" class="form-input-field" placeholder="e.g. Python, React, FastAPI">
+      </div>
+
+      <div class="form-group-item">
+        <label class="form-label-text">Short Description</label>
+        <input type="text" id="newProjectDesc" class="form-input-field" placeholder="Brief outline of the project goal">
+      </div>
+
+      <button onclick="createNewProject()" class="btn-action-glow" style="margin-top: 1.25rem;">Publish Roster 🚀</button>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:5000';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const storedUser = localStorage.getItem('synqora_user');
+      if (storedUser) {
+        try {
+          const u = JSON.parse(storedUser);
+          if (u && u.full_name) {
+            document.getElementById('topUserName').innerText = u.full_name;
+            document.getElementById('myRosterName').innerText = u.full_name + ' (You)';
+            const parts = u.full_name.trim().split(' ');
+            const initials = parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : u.full_name.substring(0, 2).toUpperCase();
+            document.getElementById('topAvatar').innerText = initials;
+            document.getElementById('myAvatarMini').innerText = initials;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      fetchProjectMembers();
+    });
+   async function fetchProjectMembers() {
+      const token = localStorage.getItem('synqora_token');
+      console.log('Token found:', token ? 'Yes' : 'No');
+      if (!token) return;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/project-members`, {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        console.log('API Response data:', data); // <-- Yeh terminal/console me check kar
+
+        if (data.success) {
+          const members = data.members || [];
+          console.log('Parsed members count:', members.length);
+          
+          const synqoraContainer = document.getElementById('synqoraMembersContainer');
+          if (synqoraContainer) synqoraContainer.innerHTML = '';
+
+          members.forEach(m => {
+            const initials = m.member_name ? m.member_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'M';
+            
+            const memberHTML = `
+              <div class="roster-slot-item" style="margin-top: 0.6rem;">
+                <div class="member-info">
+                  <div class="member-avatar-mini" style="background: linear-gradient(135deg, #00FF87 0%, #0072FF 100%);">${initials}</div>
+                  <div>
+                    <div class="slot-title">${m.member_name}</div>
+                    <div class="slot-subtitle">${m.member_email} (${m.project_title})</div>
+                  </div>
+                </div>
+                <span class="badge-assigned">✓ ACCEPTED</span>
+              </div>
+            `;
+
+            if (synqoraContainer) {
+              synqoraContainer.insertAdjacentHTML('beforeend', memberHTML);
+            }
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching project members:', err);
+      }
+    }
+
+    
+    function openCreateProjectModal() {
+      document.getElementById('createProjectModal').style.display = 'flex';
+    }
+
+    function closeCreateProjectModal() {
+      document.getElementById('createProjectModal').style.display = 'none';
+    }
+
+    function filterProjects(status, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const cards = document.querySelectorAll('.project-card');
+      cards.forEach(c => {
+        if (status === 'all' || c.getAttribute('data-status') === status) {
+          c.style.display = 'flex';
+        } else {
+          c.style.display = 'none';
+        }
+      });
+    }
+
+    function createNewProject() {
+      const title = document.getElementById('newProjectTitle').value.trim();
+      const tech = document.getElementById('newProjectTech').value.trim();
+      const desc = document.getElementById('newProjectDesc').value.trim();
+
+      if (!title) {
+        alert('Please enter a Project Title!');
+        return;
+      }
+
+      const techPills = tech ? tech.split(',').map(t => `<span class="tech-pill">${t.trim()}</span>`).join('') : '<span class="tech-pill">General</span>';
+
+      const grid = document.getElementById('projectsGrid');
+      const cardHtml = `
+        <div class="project-card" data-status="planning">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem;">
+              <div>
+                <h3 class="project-title">${title}</h3>
+                <span class="badge badge-pending" style="margin-top: 0.2rem; background: rgba(255,184,0,0.12); color: #FFB800; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700;">IN PLANNING</span>
+              </div>
+              <button class="card-options-btn" title="More Options">⋮</button>
+            </div>
+
+            <p class="project-desc">${desc || 'Custom team engineering project.'}</p>
+
+            <div>${techPills}</div>
+
+            <div style="font-size: 0.8rem; color: #A0AEC0; font-weight: 700; margin-bottom: 0.65rem;">Team Roster Members:</div>
+
+            <div class="roster-slot-item">
+              <div class="member-info">
+                <div class="member-avatar-mini">AT</div>
+                <div>
+                  <div class="slot-title">Abhishek Tiwari (You)</div>
+                  <div class="slot-subtitle">Project Lead</div>
+                </div>
+              </div>
+              <span class="badge-assigned">✓ ASSIGNED</span>
+            </div>
+          </div>
+
+          <a href="teammates.html" class="btn-action-glow">Recruit Missing Teammates 🔍</a>
+        </div>
+      `;
+
+      grid.insertAdjacentHTML('afterbegin', cardHtml);
+      closeCreateProjectModal();
+
+      document.getElementById('newProjectTitle').value = '';
+      document.getElementById('newProjectTech').value = '';
+      document.getElementById('newProjectDesc').value = '';
+    }
+  </script>
+  <script src="js/app.js"></script>
+</body>
+</html>

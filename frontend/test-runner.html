@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synqora — Live AI Assessment Protocol</title>
+  
+  <!-- GLOBAL CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- FONTS & LIBS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Orbitron:wght@800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      background-color: #090D16 !important;
+      color: #FFFFFF;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .test-header-bar {
+      position: sticky;
+      top: 0;
+      background: #131B2E;
+      border-bottom: 1px solid #24324D;
+      padding: 1rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .live-timer-box {
+      background: #090D16;
+      border: 1px solid #FF3366;
+      color: #FF3366;
+      padding: 0.5rem 1.1rem;
+      border-radius: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      box-shadow: 0 0 15px rgba(255, 51, 102, 0.25);
+    }
+
+    .meta-tag-company {
+      background: rgba(0, 240, 255, 0.12);
+      color: #00F0FF;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-right: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .meta-tag-type {
+      background: rgba(255, 184, 0, 0.12);
+      color: #FFB800;
+      border: 1px solid rgba(255, 184, 0, 0.3);
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 1.25rem;
+    }
+
+    /* 2-COLUMN TEST LAYOUT */
+    .test-main-layout {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 1.5rem;
+      max-width: 1150px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    @media (max-width: 960px) {
+      .test-main-layout { grid-template-columns: 1fr; }
+    }
+
+    .test-card-container {
+      background: #131B2E;
+      border: 1px solid #24324D;
+      border-radius: 20px;
+      padding: 2.25rem;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    /* QUESTION PALETTE SIDEBAR */
+    .palette-sidebar {
+      background: #131B2E;
+      border: 1px solid #24324D;
+      border-radius: 20px;
+      padding: 1.5rem;
+      height: fit-content;
+    }
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .palette-item {
+      aspect-ratio: 1;
+      background: #090D16;
+      border: 1px solid #24324D;
+      border-radius: 10px;
+      color: #A0AEC0;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .palette-item.active {
+      border-color: #00F0FF;
+      color: #00F0FF;
+      background: rgba(0, 240, 255, 0.12);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+    }
+
+    .palette-item.answered {
+      border-color: #00FF87;
+      color: #00FF87;
+      background: rgba(0, 255, 135, 0.12);
+    }
+
+    /* CODE SNIPPET BOX STYLING */
+    .code-snippet-box {
+      background: #060911;
+      border: 1px solid #24324D;
+      border-left: 4px solid #00F0FF;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1.25rem 0 1.75rem 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      color: #00FF87;
+      white-space: pre;
+      overflow-x: auto;
+      line-height: 1.6;
+      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+    }
+
+    .option-item {
+      background: #090D16;
+      border: 2px solid #24324D;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .option-item:hover {
+      border-color: rgba(0, 240, 255, 0.5);
+      background: rgba(0, 240, 255, 0.03);
+    }
+
+    .option-item.selected {
+      border-color: #00F0FF !important;
+      background: rgba(0, 240, 255, 0.12) !important;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+    }
+
+    .option-item input[type="radio"] {
+      accent-color: #00F0FF;
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+
+    .manual-input-field {
+      width: 100%;
+      background: #090D16;
+      border: 2px solid #24324D;
+      color: #00FF87;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.85rem 1.1rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      margin-top: 0.5rem;
+      margin-bottom: 1.5rem;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    .manual-input-field:focus {
+      border-color: #00F0FF;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+    }
+
+    .btn-next-action {
+      background: linear-gradient(135deg, #00F0FF 0%, #00FF87 100%);
+      color: #000000 !important;
+      font-weight: 800 !important;
+      border: none;
+      padding: 0.85rem 1.75rem;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    .btn-next-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0, 255, 135, 0.6);
+    }
+
+    .btn-prev-action {
+      background: #090D16;
+      border: 1px solid #24324D;
+      color: #A0AEC0;
+      font-weight: 700;
+      padding: 0.85rem 1.5rem;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-prev-action:hover {
+      border-color: #00F0FF;
+      color: #00F0FF;
+    }
+
+    .btn-secondary-action {
+      background: #090D16;
+      border: 1px solid #24324D;
+      color: #FFF;
+      font-weight: 700;
+      padding: 0.85rem 1.5rem;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary-action:hover {
+      border-color: #00F0FF;
+      color: #00F0FF;
+    }
+
+    .modal-overlay-custom {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(9, 13, 22, 0.96);
+      backdrop-filter: blur(14px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+    }
+
+    .modal-content-box {
+      background: #131B2E;
+      border: 2px solid #00F0FF;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 460px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.35);
+      animation: smoothScaleAppear 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes smoothScaleAppear {
+      0% {
+        opacity: 0;
+        transform: scale(0.85) translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .score-badge-circle {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: rgba(0, 240, 255, 0.1);
+      border: 3px solid #00F0FF;
+      color: #00F0FF;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.6rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0.85rem auto;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+  </style>
+</head>
+<body oncontextmenu="return false;">
+
+  <!-- QUIZ WRAPPER CONTAINER -->
+  <div id="quizWrapperContainer">
+    <header class="test-header-bar">
+      <div>
+        <h3 style="color: #FFF; font-weight: 800; margin: 0; font-size: 1.15rem;" id="roundHeaderTitle">Round 1: Conceptual & Rapid-Fire Technical Mix</h3>
+        <p style="font-size: 0.8rem; color: #A0AEC0; margin: 0.2rem 0 0 0;" id="questionTracker">Question 1 of 10 • Anti-Cheating Active 🛡️</p>
+      </div>
+
+      <div class="live-timer-box">
+        <span>⏱️ Time:</span>
+        <span id="timerDisplay">10:00</span>
+      </div>
+    </header>
+
+    <main class="test-main-layout">
+      
+      <!-- LEFT: QUESTION CARD -->
+      <div class="test-card-container">
+        
+        <div style="display: flex; flex-wrap: wrap;">
+          <div class="meta-tag-company" id="companyTag">
+            🏢 Likely asked in product startups
+          </div>
+          <div class="meta-tag-type" id="typeTag">
+            🏷️ Type: Standard MCQ
+          </div>
+        </div>
+
+        <!-- DYNAMIC QUESTION CONTENT CONTAINER -->
+        <div id="questionContentBox">
+          <h2 style="font-size: 1.2rem; color: #FFF; font-weight: 700; line-height: 1.5; margin-bottom: 1.75rem;" id="questionText">
+            Connecting to Synqora AI Engine...
+          </h2>
+        </div>
+
+        <div id="optionsContainer">
+          <div style="color: #A0AEC0; padding: 1rem 0;">Loading fresh questions from Groq AI service...</div>
+        </div>
+
+        <!-- NAVIGATION BUTTONS ROW -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.75rem;">
+          <button id="prevQuestionBtn" onclick="handlePrevQuestion()" class="btn-prev-action" style="visibility: hidden;">
+            ← Previous Question
+          </button>
+          
+          <button id="nextQuestionBtn" onclick="handleNextQuestion()" class="btn-next-action">
+            Next Question →
+          </button>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: QUESTION PALETTE SIDEBAR -->
+      <div class="palette-sidebar">
+        <h4 style="margin: 0 0 0.5rem 0; color: #FFF; font-weight: 800; font-size: 0.95rem;">Question Palette</h4>
+        <p style="margin: 0; color: #A0AEC0; font-size: 0.75rem;">Track answered & current questions:</p>
+
+        <div class="palette-grid" id="paletteGrid">
+          <div class="palette-item active" id="pal1" onclick="jumpToQuestion(1)">1</div>
+          <div class="palette-item" id="pal2" onclick="jumpToQuestion(2)">2</div>
+          <div class="palette-item" id="pal3" onclick="jumpToQuestion(3)">3</div>
+          <div class="palette-item" id="pal4" onclick="jumpToQuestion(4)">4</div>
+          <div class="palette-item" id="pal5" onclick="jumpToQuestion(5)">5</div>
+          <div class="palette-item" id="pal6" onclick="jumpToQuestion(6)">6</div>
+          <div class="palette-item" id="pal7" onclick="jumpToQuestion(7)">7</div>
+          <div class="palette-item" id="pal8" onclick="jumpToQuestion(8)">8</div>
+          <div class="palette-item" id="pal9" onclick="jumpToQuestion(9)">9</div>
+          <div class="palette-item" id="pal10" onclick="jumpToQuestion(10)">10</div>
+        </div>
+
+        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #24324D; font-size: 0.78rem; color: #A0AEC0;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
+            <span style="width: 10px; height: 10px; background: #00F0FF; border-radius: 50%; display: inline-block;"></span> Active Question
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="width: 10px; height: 10px; background: #00FF87; border-radius: 50%; display: inline-block;"></span> Answered
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- WARNING MODAL FOR NO SELECTION -->
+  <div class="modal-overlay-custom" id="selectionWarningModal">
+    <div class="modal-content-box" style="border-color: #FFB800;">
+      <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚠️</div>
+      <h2 style="color: #FFB800; font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem;">Answer Selection Required!</h2>
+      <p style="color: #A0AEC0; font-size: 0.85rem; margin-bottom: 1.25rem; line-height: 1.5;">
+        You cannot proceed without picking an option or entering an answer for this question.
+      </p>
+      <button onclick="closeSelectionModal()" class="btn-next-action" style="width: 100%;">Got it, let me select</button>
+    </div>
+  </div>
+
+  <!-- SCORECARD MODAL -->
+  <div class="modal-overlay-custom" id="roundScoreModal">
+    <div class="modal-content-box">
+      <div style="font-size: 2.2rem; margin-bottom: 0.2rem;">📊</div>
+      <h2 style="color: #FFF; font-size: 1.4rem; font-weight: 800; margin-bottom: 0.2rem;" id="scorecardModalTitle">Round 1 Scorecard</h2>
+      <p style="color: #A0AEC0; font-size: 0.82rem; margin-bottom: 0.75rem;">Synqora AI Assessment Results</p>
+
+      <div class="score-badge-circle" id="scorePercentageBadge">
+        0%
+      </div>
+
+      <div style="background: #090D16; border: 1px solid #24324D; padding: 0.85rem 1rem; border-radius: 12px; margin-bottom: 1.25rem; text-align: left; font-size: 0.82rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+          <span style="color: #A0AEC0;">Skill Verified:</span>
+          <strong style="color: #00F0FF;" id="modalSkillTagText">Python</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+          <span style="color: #A0AEC0;">Correct Answers:</span>
+          <strong style="color: #00FF87;" id="correctCountText">0 / 10</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+          <span style="color: #A0AEC0;">Incorrect Answers:</span>
+          <strong style="color: #FF3366;" id="incorrectCountText">0 / 10</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: #A0AEC0;">Status:</span>
+          <strong style="color: #00F0FF;" id="roundPassStatus">PASSED</strong>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: center;" id="modalActionButtonsRow">
+        <!-- DYNAMICALLY POPULATED -->
+      </div>
+    </div>
+  </div>
+
+  <!-- PROCTOR WARNING MODAL -->
+  <div class="modal-overlay-custom" id="warningModal">
+    <div class="modal-content-box" style="border-color: #FF3366;">
+      <h2 style="color: #FF3366; font-size: 1.5rem; margin-bottom: 0.5rem;">⚠️ CHEATING WARNING!</h2>
+      <p style="color: #A0AEC0; font-size: 0.85rem; margin-bottom: 1.25rem; line-height: 1.5;">
+        Tab switching or window blur detected by Synqora Anti-Cheating Protocol.
+      </p>
+      <div style="background: #090D16; border: 1px solid #FF3366; padding: 0.65rem; border-radius: 10px; color: #FF3366; font-weight: 800; margin-bottom: 1.25rem;">
+        Warning Count: <span id="warningCountText">1</span> / 3
+      </div>
+      <button onclick="resumeTest()" style="background: #FF3366; color: #FFF; font-weight: 800; border: none; padding: 0.75rem; border-radius: 10px; cursor: pointer; width: 100%;">I Understand, Resume Test</button>
+    </div>
+  </div>
+
+  <script>
+    let currentRound = 1;
+    let questionIndex = 1;
+    let activeQuestions = [];
+    let userAnswersMap = {};
+    let warningCount = 0;
+
+    const testUrlParams = new URLSearchParams(window.location.search);
+    const selectedSkill = testUrlParams.get('skill') || 'Python';
+
+    let timeInSeconds = 600;
+    let countdownTimer = null;
+
+    function resetAndStartTimer() {
+      if (countdownTimer) clearInterval(countdownTimer);
+      timeInSeconds = 600;
+
+      countdownTimer = setInterval(() => {
+        let minutes = Math.floor(timeInSeconds / 60);
+        let seconds = timeInSeconds % 60;
+
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+
+        const timerEl = document.getElementById('timerDisplay');
+        if (timerEl) timerEl.innerText = `${minutes}:${seconds}`;
+
+        if (timeInSeconds <= 0) {
+          clearInterval(countdownTimer);
+          alert('⏱️ Time UP! Auto-submitting assessment.');
+          window.location.href = 'skills.html';
+        }
+        timeInSeconds--;
+      }, 1000);
+    }
+
+    function sanitizeAnswer(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/\\n/g, '')
+        .replace(/[.,/#!$%^&*;:{}=\-_`~()'"]/g, '')
+        .trim()
+        .toLowerCase();
+    }
+
+    function jumpToQuestion(num) {
+      if (num >= 1 && num <= 10) {
+        questionIndex = num;
+        document.getElementById('questionTracker').innerText = `Question ${questionIndex} of 10 • Anti-Cheating Active 🛡️`;
+        renderCurrentQuestion();
+      }
+    }
+
+    async function fetchQuestionsFromBackend(skill, round) {
+      document.getElementById('questionContentBox').innerHTML = `<h2 style="font-size: 1.2rem; color: #FFF;">Generating Fresh AI Questions... 🤖</h2>`;
+      document.getElementById('optionsContainer').innerHTML = `<div style="color: #00F0FF; padding: 1rem 0;">Fetching live AI questions from FastAPI Engine...</div>`;
+      
+      try {
+        let response = await fetch(`http://127.0.0.1:8000/api/questions?skill=${encodeURIComponent(skill)}&round=${round}&user_id=1&t=${Date.now()}`).catch(() => null);
+        
+        if (response && response.ok) {
+          activeQuestions = await response.json();
+          renderCurrentQuestion();
+        } else {
+          renderFallbackQuestion();
+        }
+      } catch (err) {
+        renderFallbackQuestion();
+      }
+    }
+
+    function selectOptionCard(element, userVal, optionKey) {
+      document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
+      element.classList.add('selected');
+
+      const radio = element.querySelector('input[type="radio"]');
+      if (radio) radio.checked = true;
+
+      userAnswersMap[questionIndex] = optionKey || userVal;
+    }
+
+    function formatQuestionWithCode(rawText) {
+      let cleanText = String(rawText).replace(/\\n/g, '\n');
+
+      if (cleanText.includes('```')) {
+        let parts = cleanText.split('```');
+        let headerText = parts[0];
+        let codeContent = parts[1] ? parts[1].replace(/^[a-zA-Z]+\n/, '') : '';
+        let footerText = parts[2] || '';
+
+        return `
+          <h2 style="font-size: 1.15rem; color: #FFF; font-weight: 700; line-height: 1.5; margin-bottom: 0.75rem;">
+            Q${questionIndex}. ${headerText.trim()}
+          </h2>
+          <div class="code-snippet-box">${codeContent.trim()}</div>
+          ${footerText.trim() ? `<p style="color: #A0AEC0; font-size: 0.95rem; margin-bottom: 1.25rem;">${footerText.trim()}</p>` : ''}
+        `;
+      } 
+      else if (cleanText.includes('\n')) {
+        let lines = cleanText.split('\n').filter(l => l.trim().length > 0);
+        let titleLine = lines[0];
+        let codeLines = lines.slice(1).join('\n').trim();
+
+        if (codeLines.length > 0) {
+          return `
+            <h2 style="font-size: 1.15rem; color: #FFF; font-weight: 700; line-height: 1.5; margin-bottom: 0.75rem;">
+              Q${questionIndex}. ${titleLine}
+            </h2>
+            <div class="code-snippet-box">${codeLines}</div>
+          `;
+        }
+      }
+
+      return `
+        <h2 style="font-size: 1.15rem; color: #FFF; font-weight: 700; line-height: 1.5; margin-bottom: 1.75rem;">
+          Q${questionIndex}. ${cleanText}
+        </h2>
+      `;
+    }
+
+    function updatePaletteUI() {
+      for (let i = 1; i <= 10; i++) {
+        const item = document.getElementById(`pal${i}`);
+        if (!item) continue;
+
+        if (i === questionIndex) {
+          item.className = 'palette-item active';
+        } else if (userAnswersMap[i]) {
+          item.className = 'palette-item answered';
+        } else {
+          item.className = 'palette-item';
+        }
+      }
+
+      const prevBtn = document.getElementById('prevQuestionBtn');
+      if (prevBtn) {
+        prevBtn.style.visibility = (questionIndex > 1) ? 'visible' : 'hidden';
+      }
+
+      const nextBtn = document.getElementById('nextQuestionBtn');
+      if (nextBtn) {
+        nextBtn.innerText = (questionIndex === 10) ? `Submit Round ${currentRound} 🚀` : 'Next Question →';
+      }
+    }
+
+    function renderCurrentQuestion() {
+      updatePaletteUI();
+
+      if (!activeQuestions || activeQuestions.length === 0) {
+        renderFallbackQuestion();
+        return;
+      }
+      
+      const q = activeQuestions[questionIndex - 1] || activeQuestions[0];
+      
+      const realisticTags = [
+        "Likely asked in product startups",
+        "Common interview pattern",
+        "Core engineering assessment",
+        "Senior developer screening round",
+        "Problem-solving aptitude test"
+      ];
+      const randomTag = realisticTags[(questionIndex + currentRound) % realisticTags.length];
+
+      document.getElementById('companyTag').innerText = `🏢 ${randomTag}`;
+      document.getElementById('typeTag').innerText = `🏷️ Type: ${q.type || 'Standard MCQ'}`;
+
+      document.getElementById('questionContentBox').innerHTML = formatQuestionWithCode(q.question);
+
+      const optionsContainer = document.getElementById('optionsContainer');
+      const savedAns = userAnswersMap[questionIndex];
+      
+      let cleanOptions = (q.options || []).filter(opt => {
+        const clean = String(opt).replace(/\\n/g, ' ').trim();
+        return clean !== 'correct_answer' && clean !== ':' && clean !== 'A' && clean !== 'B' && clean !== 'C' && clean !== 'D';
+      });
+
+      if (q.type === 'True / False' || q.type === 'True/False') {
+        optionsContainer.innerHTML = `
+          <div class="option-item ${savedAns === 'A' ? 'selected' : ''}" onclick="selectOptionCard(this, 'TRUE', 'A')">
+            <input type="radio" name="tf" id="tf1" value="A" ${savedAns === 'A' ? 'checked' : ''}>
+            <label for="tf1" style="color:#FFF; cursor:pointer;">A) TRUE</label>
+          </div>
+          <div class="option-item ${savedAns === 'B' ? 'selected' : ''}" onclick="selectOptionCard(this, 'FALSE', 'B')">
+            <input type="radio" name="tf" id="tf2" value="B" ${savedAns === 'B' ? 'checked' : ''}>
+            <label for="tf2" style="color:#FFF; cursor:pointer;">B) FALSE</label>
+          </div>
+        `;
+      } else if (q.type === 'Manual Fill-In' || cleanOptions.length === 0) {
+        optionsContainer.innerHTML = `
+          <label style="color: #A0AEC0; font-size: 0.85rem; font-weight: 700;">Type your answer:</label>
+          <input type="text" class="manual-input-field" placeholder="e.g. O(1)" id="manualFillAns" value="${savedAns || ''}" oninput="userAnswersMap[questionIndex] = this.value;">
+        `;
+      } else {
+        optionsContainer.innerHTML = cleanOptions.map((opt, idx) => {
+          const optKey = String(opt).trim().charAt(0);
+          const isSelected = savedAns === optKey || savedAns === String(opt);
+          return `
+            <div class="option-item ${isSelected ? 'selected' : ''}" onclick="selectOptionCard(this, '${String(opt).replace(/'/g, "\\'")}', '${optKey}')">
+              <input type="radio" name="mcq" id="opt${idx}" value="${optKey}" ${isSelected ? 'checked' : ''}>
+              <label for="opt${idx}" style="color:#FFF; cursor:pointer;">${opt}</label>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function renderFallbackQuestion() {
+      updatePaletteUI();
+      const optionsContainer = document.getElementById('optionsContainer');
+      const savedAns = userAnswersMap[questionIndex];
+
+      document.getElementById('companyTag').innerText = '🏢 Common interview pattern';
+      document.getElementById('typeTag').innerText = '🏷️ Type: Standard MCQ';
+
+      if (questionIndex === 1) {
+        document.getElementById('questionContentBox').innerHTML = formatQuestionWithCode(`Which data structure in ${selectedSkill} operates on key-value pairs with O(1) average lookup complexity?`);
+        
+        optionsContainer.innerHTML = `
+          <div class="option-item ${savedAns === 'A' ? 'selected' : ''}" onclick="selectOptionCard(this, 'List', 'A')"><input type="radio" name="mcq" id="o1" ${savedAns === 'A' ? 'checked' : ''}><label for="o1" style="color:#FFF;">A) List / Array</label></div>
+          <div class="option-item ${savedAns === 'B' ? 'selected' : ''}" onclick="selectOptionCard(this, 'Hash Table', 'B')"><input type="radio" name="mcq" id="o2" ${savedAns === 'B' ? 'checked' : ''}><label for="o2" style="color:#FFF;">B) Hash Table / Dictionary</label></div>
+          <div class="option-item ${savedAns === 'C' ? 'selected' : ''}" onclick="selectOptionCard(this, 'Queue', 'C')"><input type="radio" name="mcq" id="o3" ${savedAns === 'C' ? 'checked' : ''}><label for="o3" style="color:#FFF;">C) Queue</label></div>
+        `;
+      } else {
+        document.getElementById('questionContentBox').innerHTML = formatQuestionWithCode(`What is the average time complexity for primary index access in ${selectedSkill}?`);
+        optionsContainer.innerHTML = `
+          <label style="color: #A0AEC0; font-size: 0.85rem; font-weight: 700;">Type your exact answer here:</label>
+          <input type="text" class="manual-input-field" placeholder="e.g. O(1)" id="manualFillAns" value="${savedAns || ''}" oninput="userAnswersMap[questionIndex] = this.value;">
+        `;
+      }
+    }
+
+    function calculateTotalScore() {
+      let correctAnswersCount = 0;
+      for (let i = 1; i <= 10; i++) {
+        const q = activeQuestions[i - 1];
+        const rawCorrect = q ? (q.correct_answer || 'B') : 'B';
+        const rawUser = userAnswersMap[i] || '';
+
+        const cleanCorrect = sanitizeAnswer(rawCorrect);
+        const cleanUser = sanitizeAnswer(rawUser);
+
+        if (cleanUser && (cleanUser === cleanCorrect || cleanUser.includes(cleanCorrect) || cleanCorrect.includes(cleanUser))) {
+          correctAnswersCount++;
+        }
+      }
+      return correctAnswersCount;
+    }
+
+    function handleNextQuestion() {
+      if (!userAnswersMap[questionIndex] || userAnswersMap[questionIndex].trim() === '') {
+        document.getElementById('selectionWarningModal').style.display = 'flex';
+        return;
+      }
+
+      if (questionIndex < 10) {
+        questionIndex++;
+        document.getElementById('questionTracker').innerText = `Question ${questionIndex} of 10 • Anti-Cheating Active 🛡️`;
+        renderCurrentQuestion();
+      } else {
+        displayRoundScoreboard(currentRound);
+      }
+    }
+
+    function handlePrevQuestion() {
+      if (questionIndex > 1) {
+        questionIndex--;
+        document.getElementById('questionTracker').innerText = `Question ${questionIndex} of 10 • Anti-Cheating Active 🛡️`;
+        renderCurrentQuestion();
+      }
+    }
+
+    function closeSelectionModal() {
+      document.getElementById('selectionWarningModal').style.display = 'none';
+    }
+
+    function displayRoundScoreboard(roundNum) {
+      document.getElementById('quizWrapperContainer').style.display = 'none';
+
+      const correctCount = calculateTotalScore();
+      const percentage = Math.round((correctCount / 10) * 100);
+      
+      document.getElementById('scorecardModalTitle').innerText = `Round ${roundNum} Scorecard`;
+      document.getElementById('scorePercentageBadge').innerText = `${percentage}%`;
+      document.getElementById('correctCountText').innerText = `${correctCount} / 10`;
+      document.getElementById('incorrectCountText').innerText = `${10 - correctCount} / 10`;
+      document.getElementById('modalSkillTagText').innerText = selectedSkill;
+      
+      const statusElement = document.getElementById('roundPassStatus');
+      const actionRow = document.getElementById('modalActionButtonsRow');
+
+      if (percentage >= 80) {
+        statusElement.innerText = "PASSED 🚀";
+        statusElement.style.color = "#00FF87";
+
+        if (roundNum === 1) {
+          actionRow.innerHTML = `
+            <button onclick="reattemptRound(1)" class="btn-secondary-action" style="flex: 1;">🔄 Re-Attempt</button>
+            <button onclick="startRound2()" class="btn-next-action" style="flex: 1.2;">Round 2 →</button>
+          `;
+        } else {
+          actionRow.innerHTML = `
+            <button onclick="reattemptRound(2)" class="btn-secondary-action" style="flex: 1;">🔄 Re-Attempt</button>
+            <button onclick="triggerGrandCelebrationAndRedirect(${percentage})" class="btn-next-action" style="flex: 1.3; background: linear-gradient(135deg, #00FF87 0%, #00F0FF 100%);">Claim Passport 🎓</button>
+          `;
+        }
+      } else {
+        statusElement.innerText = "FAILED (Min 80%) ⚠️";
+        statusElement.style.color = "#FF3366";
+
+        actionRow.innerHTML = `
+          <button onclick="reattemptRound(${roundNum})" class="btn-next-action" style="width: 100%;">🔄 Re-Attempt Round ${roundNum}</button>
+        `;
+      }
+
+      document.getElementById('roundScoreModal').style.display = 'flex';
+    }
+
+    function reattemptRound(roundNum) {
+      document.getElementById('roundScoreModal').style.display = 'none';
+      document.getElementById('quizWrapperContainer').style.display = 'block';
+      questionIndex = 1;
+      userAnswersMap = {};
+      activeQuestions = [];
+
+      resetAndStartTimer();
+      fetchQuestionsFromBackend(selectedSkill, roundNum);
+    }
+
+    function startRound2() {
+      document.getElementById('roundScoreModal').style.display = 'none';
+      document.getElementById('quizWrapperContainer').style.display = 'block';
+      currentRound = 2;
+      questionIndex = 1;
+      userAnswersMap = {};
+      activeQuestions = [];
+
+      document.getElementById('roundHeaderTitle').innerText = 'Round 2: Practical Debugging & Coding Sandbox';
+      document.getElementById('questionTracker').innerText = 'Problem 1 of 10 • Anti-Cheating Active 🛡️';
+      
+      resetAndStartTimer();
+      fetchQuestionsFromBackend(selectedSkill, 2);
+    }
+
+    async function triggerGrandCelebrationAndRedirect(finalScore) {
+      document.getElementById('roundScoreModal').style.display = 'none';
+
+      setTimeout(() => {
+        var duration = 4 * 1000;
+        var end = Date.now() + duration;
+
+        (function frame() {
+          confetti({ particleCount: 10, angle: 60, spread: 70, origin: { x: 0, y: 0.5 }, colors: ['#00F0FF', '#00FF87', '#FFD700', '#8B5CF6'] });
+          confetti({ particleCount: 10, angle: 120, spread: 70, origin: { x: 1, y: 0.5 }, colors: ['#00F0FF', '#00FF87', '#FFD700', '#8B5CF6'] });
+          if (Date.now() < end) requestAnimationFrame(frame);
+        }());
+      }, 200);
+
+      try {
+        const token = localStorage.getItem('synqora_token') || '';
+        const storedUser = JSON.parse(localStorage.getItem('synqora_user') || '{}');
+        const response = await fetch('http://localhost:5000/api/assessment/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            user_id: storedUser.id || 1,
+            skill_name: selectedSkill,
+            score_percentage: finalScore,
+            proctor_violations: warningCount
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          setTimeout(() => { window.location.href = data.passport_url; }, 3500);
+        } else {
+          setTimeout(() => { window.location.href = `passport.html?skill=${encodeURIComponent(selectedSkill)}&score=${finalScore}`; }, 3500);
+        }
+      } catch (err) {
+        setTimeout(() => { window.location.href = `passport.html?skill=${encodeURIComponent(selectedSkill)}&score=${finalScore}`; }, 3500);
+      }
+    }
+
+    const warningModal = document.getElementById('warningModal');
+    const warningCountText = document.getElementById('warningCountText');
+
+    window.addEventListener('blur', () => {
+      warningCount++;
+      if (warningCountText) warningCountText.innerText = warningCount;
+      if (warningModal) warningModal.style.display = 'flex';
+
+      if (warningCount >= 3) {
+        alert('❌ Test Terminated! Multiple tab switches detected. Score: 0');
+        window.location.href = 'skills.html';
+      }
+    });
+
+    function resumeTest() {
+      if (warningModal) warningModal.style.display = 'none';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'u' || e.key === 'i')) {
+        e.preventDefault();
+        alert('Copying & DevShortcuts are disabled during Synqora Proctoring!');
+      }
+    });
+
+    // INIT
+    resetAndStartTimer();
+    fetchQuestionsFromBackend(selectedSkill, 1);
+  </script>
+
+</body>
+</html>

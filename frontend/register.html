@@ -1,0 +1,662 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synqora — Create Account</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #090D16 !important;
+      color: #FFFFFF;
+      min-height: 100vh;
+      display: flex;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .auth-split-wrapper {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .auth-showcase-panel {
+      flex: 1.2;
+      background: linear-gradient(135deg, #090D16 0%, #131B2E 100%);
+      border-right: 1px solid #24324D;
+      padding: 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-showcase-panel::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(0,240,255,.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-decoration: none;
+    }
+
+    .brand-logo-svg {
+      width: 42px;
+      height: 42px;
+      filter: drop-shadow(0 0 10px #00F0FF);
+    }
+
+    .brand-title-text {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #FFFFFF;
+    }
+
+    .showcase-content {
+      max-width: 520px;
+      margin: 2.5rem 0;
+    }
+
+    .showcase-headline {
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1.15;
+      color: #FFFFFF;
+      margin-bottom: 1.25rem;
+    }
+
+    .showcase-headline span {
+      background: linear-gradient(135deg, #00F0FF 0%, #00FF87 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .showcase-desc {
+      font-size: 1.05rem;
+      color: #A0AEC0;
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+    }
+
+    .feature-pill-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .feature-pill-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(19,27,46,.7);
+      border: 1px solid #24324D;
+      padding: .9rem 1.25rem;
+      border-radius: 14px;
+      backdrop-filter: blur(10px);
+    }
+
+    .pill-icon-glow {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(0,240,255,.12);
+      border: 1px solid rgba(0,240,255,.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #00F0FF;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .pill-text-title {
+      font-size: .95rem;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    .pill-text-sub {
+      font-size: .8rem;
+      color: #A0AEC0;
+    }
+
+    .showcase-footer-stats {
+      display: flex;
+      gap: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid #24324D;
+    }
+
+    .stat-block-num {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #00F0FF;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-block-lbl {
+      font-size: .8rem;
+      color: #A0AEC0;
+      font-weight: 600;
+    }
+
+    .auth-form-panel {
+      flex: 1;
+      background: #090D16;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      position: relative;
+    }
+
+    .auth-form-card {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .form-header-box {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: .4rem;
+    }
+
+    .form-subtitle {
+      color: #A0AEC0;
+      font-size: .92rem;
+    }
+
+    .btn-google-social {
+      width: 100%;
+      background: #131B2E;
+      border: 1px solid #24324D;
+      color: #FFFFFF;
+      padding: .85rem;
+      border-radius: 12px;
+      font-size: .95rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .75rem;
+      cursor: pointer;
+      transition: all .2s ease;
+      margin-bottom: 1.25rem;
+    }
+
+    .btn-google-social:hover {
+      border-color: #00F0FF;
+      background: rgba(0,240,255,.05);
+      box-shadow: 0 0 15px rgba(0,240,255,.2);
+    }
+
+    .auth-divider-box {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #A0AEC0;
+      font-size: .8rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+    }
+
+    .auth-divider-box::before,
+    .auth-divider-box::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #24324D;
+    }
+
+    .auth-divider-box span {
+      padding: 0 .8rem;
+    }
+
+    .form-group-item {
+      margin-bottom: 1.15rem;
+    }
+
+    .form-label-text {
+      display: block;
+      font-size: .85rem;
+      font-weight: 700;
+      color: #A0AEC0;
+      margin-bottom: .4rem;
+    }
+
+    .form-input-field {
+      width: 100%;
+      background: #131B2E !important;
+      border: 1px solid #24324D !important;
+      color: #FFFFFF !important;
+      padding: .8rem 1rem;
+      border-radius: 12px;
+      font-size: .92rem;
+      outline: none;
+      transition: all .2s ease;
+    }
+
+    .form-input-field:focus {
+      border-color: #00F0FF !important;
+      box-shadow: 0 0 15px rgba(0,240,255,.25);
+    }
+
+    .btn-submit-glow {
+      width: 100%;
+      padding: .9rem;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #000000 !important;
+      background: linear-gradient(135deg, #00F0FF 0%, #00FF87 100%);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0,240,255,.35);
+      transition: all .2s ease;
+      margin-top: .5rem;
+    }
+
+    .btn-submit-glow:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0,240,255,.6);
+    }
+
+    .btn-submit-glow:disabled {
+      cursor: not-allowed;
+      opacity: .7;
+    }
+
+    .form-switch-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: .9rem;
+      color: #A0AEC0;
+    }
+
+    .form-switch-footer a {
+      color: #00F0FF;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .form-switch-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .auth-status {
+      display: none;
+      margin-bottom: 1rem;
+      padding: .8rem 1rem;
+      border: 1px solid #24324D;
+      border-radius: 10px;
+      font-size: .88rem;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .auth-status.error {
+      display: block;
+      color: #FFB4B4;
+      border-color: #8B3434;
+      background: rgba(255,70,70,.08);
+    }
+
+    .auth-status.success {
+      display: block;
+      color: #8AFFC1;
+      border-color: #197A53;
+      background: rgba(0,255,135,.08);
+    }
+
+    .modal-action-btn {
+      flex: 1;
+      padding: .75rem;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    @media (max-width: 960px) {
+      .auth-showcase-panel {
+        display: none;
+      }
+
+      .auth-form-panel {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .auth-form-panel {
+        padding: 2rem 1.2rem;
+      }
+
+      .form-title {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="auth-split-wrapper">
+
+    <!-- LEFT SHOWCASE PANEL -->
+    <div class="auth-showcase-panel">
+      <a href="index.html" class="brand-header">
+        <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <polygon points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5"
+            stroke="#00F0FF" stroke-width="6" fill="rgba(0,240,255,.12)"/>
+          <polygon points="50,20 75,34.5 75,65.5 50,80 25,65.5 25,34.5"
+            stroke="#00FF87" stroke-width="4" fill="none"/>
+          <circle cx="50" cy="50" r="9" fill="#00F0FF"/>
+        </svg>
+        <span class="brand-title-text">SYNQORA</span>
+      </a>
+
+      <div class="showcase-content">
+        <h1 class="showcase-headline">
+          Join The <span>Skill-Verified</span> Engineering Network.
+        </h1>
+        <p class="showcase-desc">
+          Create your profile, pass automated AI technical evaluations, and get matched with complementary student engineering teams.
+        </p>
+
+        <div class="feature-pill-list">
+          <div class="feature-pill-item">
+            <div class="pill-icon-glow">🛡️</div>
+            <div>
+              <div class="pill-text-title">Digital Skill Passports</div>
+              <div class="pill-text-sub">Verified badges shareable across portfolios</div>
+            </div>
+          </div>
+
+          <div class="feature-pill-item">
+            <div class="pill-icon-glow"
+              style="color:#00FF87;border-color:rgba(0,255,135,.3);background:rgba(0,255,135,.12);">
+              🚀
+            </div>
+            <div>
+              <div class="pill-text-title">Automated Roster Matching</div>
+              <div class="pill-text-sub">Instantly find backend, frontend, or AI roles</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="showcase-footer-stats">
+        <div>
+          <div class="stat-block-num">100%</div>
+          <div class="stat-block-lbl">Free For Students</div>
+        </div>
+        <div>
+          <div class="stat-block-num" style="color:#00FF87;">Instant</div>
+          <div class="stat-block-lbl">Verification</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT REGISTRATION PANEL -->
+    <div class="auth-form-panel">
+      <div class="auth-form-card">
+        <div class="form-header-box">
+          <h2 class="form-title">Create Account</h2>
+          <p class="form-subtitle">Join Synqora's student engineering protocol</p>
+        </div>
+
+        <button type="button" class="btn-google-social" onclick="openGoogleRegisterModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.2 9 5 12 5z"/>
+            <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+            <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9z"/>
+            <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.2-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-divider-box">
+          <span>OR REGISTER WITH EMAIL</span>
+        </div>
+
+        <div id="registrationStatus" class="auth-status" role="status" aria-live="polite"></div>
+
+        <form id="registerForm">
+          <div class="form-group-item">
+            <label class="form-label-text" for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="full_name"
+              class="form-input-field" placeholder="e.g. Abhishek Tiwari"
+              autocomplete="name" maxlength="100" required>
+          </div>
+
+          <div class="form-group-item">
+            <label class="form-label-text" for="university">University / Institute</label>
+            <input type="text" id="university" name="university"
+              class="form-input-field" placeholder="e.g. Mumbai University"
+              autocomplete="organization" maxlength="150">
+          </div>
+
+          <div class="form-group-item">
+            <label class="form-label-text" for="email">Email Address</label>
+            <input type="email" id="email" name="email"
+              class="form-input-field" placeholder="student@university.edu"
+              autocomplete="email" maxlength="100" required>
+          </div>
+
+          <div class="form-group-item">
+            <label class="form-label-text" for="password">Password</label>
+            <input type="password" id="password" name="password"
+              class="form-input-field" placeholder="Minimum 8 characters"
+              autocomplete="new-password" minlength="8" required>
+          </div>
+
+          <div class="form-group-item">
+            <label class="form-label-text" for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirm_password"
+              class="form-input-field" placeholder="Re-enter password"
+              autocomplete="new-password" minlength="8" required>
+          </div>
+
+          <button type="submit" id="registerSubmit" class="btn-submit-glow">
+            Create Account 🚀
+          </button>
+        </form>
+
+        <div class="form-switch-footer">
+          Already have an account? <a href="login.html">Sign In</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOOGLE AUTH INFORMATION MODAL -->
+  <div id="googleRegisterModal"
+    role="dialog" aria-modal="true" aria-labelledby="googleModalTitle"
+    style="display:none;position:fixed;inset:0;width:100%;height:100%;background:rgba(9,13,22,.92);backdrop-filter:blur(10px);align-items:center;justify-content:center;z-index:99999;padding:1rem;">
+
+    <div style="background:#131B2E;border:1px solid #00F0FF;border-radius:20px;padding:2rem;width:100%;max-width:420px;text-align:center;box-shadow:0 0 35px rgba(0,240,255,.3);">
+      <svg width="42" height="42" viewBox="0 0 24 24" style="margin-bottom:.75rem;" aria-hidden="true">
+        <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.2 9 5 12 5z"/>
+        <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+        <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9z"/>
+        <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.2-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/>
+      </svg>
+
+      <h3 id="googleModalTitle" style="color:#FFF;font-weight:800;font-size:1.25rem;margin-bottom:.5rem;">
+        Google registration
+      </h3>
+
+      <p style="color:#A0AEC0;font-size:.9rem;line-height:1.6;margin-bottom:1.25rem;">
+        Google sign-in has not been configured yet. To protect your account, Synqora will not create a Google account using only a typed email address. Please use email registration for now.
+      </p>
+
+      <button type="button" class="modal-action-btn"
+        onclick="closeGoogleRegisterModal()"
+        style="background:linear-gradient(135deg,#00F0FF 0%,#00FF87 100%);border:none;color:#000;">
+        Got it
+      </button>
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+
+    const SYNQORA_API_URL = 'http://localhost:5000/api';
+
+    const registrationForm = document.getElementById('registerForm');
+    const registrationButton = document.getElementById('registerSubmit');
+    const registrationStatus = document.getElementById('registrationStatus');
+
+    function showRegistrationStatus(message, type) {
+      registrationStatus.textContent = message;
+      registrationStatus.className = 'auth-status ' + type;
+    }
+
+    function openGoogleRegisterModal() {
+      document.getElementById('googleRegisterModal').style.display = 'flex';
+    }
+
+    function closeGoogleRegisterModal() {
+      document.getElementById('googleRegisterModal').style.display = 'none';
+    }
+
+    function getRegistrationError(data, status) {
+      if (data && typeof data.message === 'string' && data.message.trim()) {
+        return data.message;
+      }
+
+      if (status === 409) {
+        return 'This email may already be registered. Please sign in or use another email.';
+      }
+
+      return 'Registration failed. Please try again.';
+    }
+
+    registrationForm.addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      if (!registrationForm.reportValidity()) {
+        return;
+      }
+
+      const fullName = document.getElementById('fullName').value.trim();
+      const university = document.getElementById('university').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (!fullName) {
+        showRegistrationStatus('Please enter your full name.', 'error');
+        return;
+      }
+
+      if (password.length < 8) {
+        showRegistrationStatus('Password must contain at least 8 characters.', 'error');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showRegistrationStatus('Passwords do not match. Please try again.', 'error');
+        document.getElementById('confirmPassword').focus();
+        return;
+      }
+
+      registrationButton.disabled = true;
+      registrationButton.textContent = 'Creating account...';
+      showRegistrationStatus('Connecting to Synqora...', 'success');
+
+      try {
+        const response = await fetch(`${SYNQORA_API_URL}/auth/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            full_name: fullName,
+            university: university,
+            email: email,
+            password: password
+          })
+        });
+
+        let data;
+
+        try {
+          data = await response.json();
+        } catch {
+          throw new Error('The server returned an invalid response. Please try again.');
+        }
+
+        if (!response.ok || !data || data.success !== true) {
+          throw new Error(getRegistrationError(data, response.status));
+        }
+
+        showRegistrationStatus(
+          'Account created successfully! Redirecting to sign in...',
+          'success'
+        );
+
+        registrationForm.reset();
+
+        // Registration creates an account; login separately issues the JWT.
+        window.setTimeout(function () {
+          window.location.href = 'login.html';
+        }, 900);
+
+      } catch (error) {
+        console.error('Synqora registration error:', error);
+
+        let message = error.message || 'Unable to register. Please try again.';
+
+        if (error instanceof TypeError) {
+          message = 'Cannot connect to the Synqora backend. Make sure the Node server is running at localhost:5000.';
+        }
+
+        showRegistrationStatus(message, 'error');
+
+      } finally {
+        registrationButton.disabled = false;
+        registrationButton.textContent = 'Create Account 🚀';
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        closeGoogleRegisterModal();
+      }
+    });
+
+    document.getElementById('googleRegisterModal').addEventListener('click', function (event) {
+      if (event.target === this) {
+        closeGoogleRegisterModal();
+      }
+    });
+  </script>
+
+  <!-- CENTRAL APP SCRIPT -->
+  <script src="js/app.js"></script>
+</body>
+</html>

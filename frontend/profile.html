@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synqora — Developer Profile & Passports</title>
+  
+  <!-- GLOBAL CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    .sidebar-logo {
+      width: 36px !important;
+      height: 36px !important;
+      max-width: 36px !important;
+    }
+
+    .content-body {
+      padding: 1.8rem 2.5rem !important;
+    }
+
+    /* PROFILE HERO CARD */
+    .profile-hero-card {
+      background: #131B2E;
+      border: 1px solid #24324D;
+      border-radius: 20px;
+      padding: 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .profile-user-info {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .avatar-large {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00F0FF 0%, #00FF87 100%);
+      color: #000000;
+      font-size: 1.8rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .avatar-wrapper:hover .avatar-large {
+      transform: scale(1.03);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+    }
+
+    .upload-avatar-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      background: #00F0FF;
+      color: #080C14;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    }
+
+    .user-display-name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 0.2rem;
+    }
+
+    .user-headline {
+      font-size: 0.88rem;
+      color: #A0AEC0;
+      margin-bottom: 0.5rem;
+    }
+
+    /* GRID LAYOUT */
+    .profile-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .profile-two-col { grid-template-columns: 1fr; }
+    }
+
+    .profile-section-card {
+      background: #131B2E;
+      border: 1px solid #24324D;
+      border-radius: 18px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid #24324D;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .passport-badge-item {
+      background: #090D16;
+      border: 1px solid #24324D;
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .form-group-item {
+      margin-bottom: 1.1rem;
+    }
+
+    .form-label-text {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #A0AEC0;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-input-field {
+      width: 100%;
+      background: #090D16;
+      border: 1px solid #24324D;
+      color: #FFFFFF;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .form-input-field:focus {
+      border-color: #00F0FF;
+    }
+
+    .btn-save-glow {
+      background: linear-gradient(135deg, #00F0FF 0%, #00FF87 100%) !important;
+      color: #000000 !important;
+      font-weight: 800 !important;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.88rem;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+    }
+
+    .btn-save-glow:hover {
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+      transform: translateY(-1px);
+    }
+
+    /* SOCIAL CONNECT BUTTONS */
+    .social-connect-btn {
+      background: #090D16;
+      border: 1px solid #24324D;
+      color: #FFFFFF;
+      padding: 0.65rem 1rem;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.65rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .social-connect-btn:hover {
+      border-color: #00F0FF;
+      color: #00F0FF;
+    }
+
+    /* MODAL OVERLAY */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(9, 13, 22, 0.88);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center; justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal-box {
+      background: #131B2E;
+      border: 1px solid #00F0FF;
+      border-radius: 20px;
+      width: 90%; max-width: 480px;
+      padding: 1.75rem;
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.25);
+    }
+
+    /* AVATAR ACTION POPUP */
+    .avatar-menu-dropdown {
+      position: absolute;
+      top: 85px;
+      left: 0;
+      background: #131B2E;
+      border: 1px solid #00F0FF;
+      border-radius: 12px;
+      width: 190px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 240, 255, 0.2);
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .avatar-menu-item {
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      background: none;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s ease;
+    }
+
+    .avatar-menu-item:hover {
+      background: rgba(0, 240, 255, 0.12);
+      color: #00F0FF;
+    }
+
+    .avatar-menu-item.danger:hover {
+      background: rgba(255, 51, 102, 0.15);
+      color: #FF3366;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="app-sidebar">
+      <a href="dashboard.html" class="sidebar-brand">
+        <svg class="sidebar-logo" viewBox="0 0 100 100" fill="none">
+          <polygon points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5" stroke="#00F0FF" stroke-width="6" fill="rgba(0, 240, 255, 0.12)"/>
+          <polygon points="50,20 75,34.5 75,65.5 50,80 25,65.5 25,34.5" stroke="#00FF87" stroke-width="4" fill="none"/>
+          <circle cx="50" cy="50" r="9" fill="#00F0FF"/>
+        </svg>
+        <span class="sidebar-title">SYNQORA</span>
+      </a>
+
+      <ul class="sidebar-menu">
+        <li class="nav-item">
+          <a href="dashboard.html">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item active">
+          <a href="profile.html">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            My Profile
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="skills.html">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            My Skills
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="projects.html">
+            <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            My Projects
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="teammates.html">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Find Teammates
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="requests.html">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Requests
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="chat.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            SyncSpace Chat
+          </a>
+        </li>
+        <li class="nav-item" id="adminNavLink" style="display: none;">
+          <a href="admin-dashboard.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Admin Console
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-bottom">
+        <li class="nav-item" style="list-style: none;">
+          <a href="login.html" onclick="localStorage.removeItem('synqora_user'); localStorage.removeItem('synqora_token');" style="color: #FF3366;">
+            <svg viewBox="0 0 24 24" style="stroke: #FF3366;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Logout
+          </a>
+        </li>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="app-main">
+      <header class="app-topbar">
+        <div>
+          <h2 class="topbar-title">Developer Identity & Settings</h2>
+          <p style="font-size: 0.85rem; color: #A0AEC0;">Manage your personal profile, credentials, and verified skill passports.</p>
+        </div>
+
+        <div class="topbar-actions">
+          <div class="user-profile-badge">
+            <div class="user-avatar" id="topAvatar">ST</div>
+            <span class="user-name" id="topUserName">Loading...</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-body">
+        
+        <!-- PROFILE HERO CARD -->
+        <div class="profile-hero-card">
+          <div class="profile-user-info">
+            <div class="avatar-wrapper" onclick="toggleAvatarMenu(event)">
+              <div class="avatar-large" id="heroAvatar">ST</div>
+              <div class="upload-avatar-badge" title="Click to manage photo">📷</div>
+              
+              <!-- INTERACTIVE POPUP MENU -->
+              <div class="avatar-menu-dropdown" id="avatarMenuDropdown">
+                <button type="button" class="avatar-menu-item" onclick="document.getElementById('avatarFileInput').click()">
+                  📷 Upload New Photo
+                </button>
+                <button type="button" class="avatar-menu-item danger" id="removePhotoMenuItem" onclick="removeCustomAvatar()" style="display: none;">
+                  ✕ Remove Current Photo
+                </button>
+              </div>
+
+              <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
+            </div>
+            <div>
+              <h1 class="user-display-name" id="heroFullName">Loading...</h1>
+              <p class="user-headline" id="heroHeadline">Student • University | Engineer @ Synqora</p>
+              <div>
+                <span class="badge badge-verified" id="passportCountBadge">✓ 0 VERIFIED PASSPORTS</span>
+                <span class="badge badge-pending" style="margin-left: 0.4rem;">VERIFIED DEVELOPER</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <button onclick="openShareModal()" class="btn-save-glow" style="background: #090D16 !important; color: #00F0FF !important; border: 1px solid #00F0FF !important;">
+              Share Skill Passport 🔗
+            </button>
+          </div>
+        </div>
+
+        <!-- TWO COLUMN DETAILS GRID -->
+        <div class="profile-two-col">
+          
+          <!-- LEFT COLUMN -->
+          <div>
+            <!-- VERIFIED PASSPORTS -->
+            <div class="profile-section-card">
+              <div class="section-title">
+                <span>Verified Skill Passports</span>
+                <a href="skills.html" style="font-size: 0.8rem; color: #00F0FF; text-decoration: none;">Vault →</a>
+              </div>
+
+              <!-- DYNAMIC PASSPORT LIST CONTAINER -->
+              <div id="passportsContainer">
+                <div style="color: #A0AEC0; font-size: 0.85rem; padding: 0.5rem 0;">Loading passports from database...</div>
+              </div>
+            </div>
+
+            <!-- CONNECTED PROFILES (DYNAMIC LINK HANDLING) -->
+            <div class="profile-section-card">
+              <div class="section-title">
+                <span>Connected Developer Profiles</span>
+              </div>
+
+              <a href="javascript:void(0);" onclick="handleSocialClick('github')" class="social-connect-btn">
+                <span>🐙 GitHub Profile</span>
+                <span id="githubStatusText" style="color: #00F0FF;">+ Connect</span>
+              </a>
+
+              <a href="javascript:void(0);" onclick="handleSocialClick('linkedin')" class="social-connect-btn">
+                <span>💼 LinkedIn Profile</span>
+                <span id="linkedinStatusText" style="color: #00F0FF;">+ Connect</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: EDIT ACCOUNT SETTINGS -->
+          <div class="profile-section-card" id="editProfileCardContainer" style="height: fit-content;">
+            <div class="section-title">
+              <span id="settingsCardTitle">Account Credentials</span>
+            </div>
+
+            <form id="profileSettingsForm" onsubmit="handleProfileUpdate(event)">
+              <div class="form-group-item">
+                <label class="form-label-text">Full Name</label>
+                <input type="text" id="editFullName" class="form-input-field" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-text">University / Institute</label>
+                <input type="text" id="editUniversity" class="form-input-field" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-text">Email Address</label>
+                <input type="email" id="editEmail" class="form-input-field" required>
+              </div>
+
+              <button type="submit" id="saveProfileBtn" class="btn-save-glow" style="width: 100%; margin-top: 0.5rem;">
+                Save Profile Changes ✓
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- SHARE PASSPORT MODAL -->
+  <div class="modal-overlay" id="shareModal">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #24324D; padding-bottom: 0.75rem;">
+        <h3 style="color: #FFF; font-weight: 800;">Public Digital Passport</h3>
+        <button onclick="closeShareModal()" style="background: none; border: none; color: #A0AEC0; font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <p style="font-size: 0.85rem; color: #A0AEC0; margin-bottom: 1rem;">Share your cryptographically signed skill passport with recruiters or hackathon organizers:</p>
+
+      <div style="background: #090D16; border: 1px solid #24324D; padding: 0.85rem; border-radius: 10px; color: #00F0FF; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1.25rem; word-break: break-all;" id="shareUrlBox">
+        https://synqora.io/p/developer
+      </div>
+
+      <button onclick="copyShareLink()" class="btn-save-glow" style="width: 100%;">Copy Public Link 📋</button>
+    </div>
+  </div>
+
+  <!-- REAL-TIME BACKEND INTEGRATION SCRIPT -->
+  <script>
+    const API_BASE = 'http://localhost:5000';
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetUserId = urlParams.get('user_id');
+
+    const storedUser = localStorage.getItem('synqora_user');
+    const token = localStorage.getItem('synqora_token');
+
+    if (!token) {
+      alert('Please sign in first.');
+      window.location.href = 'login.html';
+    }
+
+    let loggedInUserId = null;
+    if (storedUser) {
+      try {
+        const u = JSON.parse(storedUser);
+        if (u && u.id) loggedInUserId = u.id;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    const currentUserId = targetUserId ? parseInt(targetUserId) : loggedInUserId;
+
+    function getInitials(name) {
+      if (!name) return 'ST';
+      const parts = name.trim().split(' ');
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+      return name.substring(0, 2).toUpperCase();
+    }
+
+    function toggleAvatarMenu(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('avatarMenuDropdown');
+      if (menu) menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    window.addEventListener('click', () => {
+      const menu = document.getElementById('avatarMenuDropdown');
+      if (menu) menu.style.display = 'none';
+    });
+
+    function applySavedAvatar(name) {
+      if (!currentUserId) return;
+      const savedImage = localStorage.getItem(`synqora_avatar_${currentUserId}`);
+      const initials = getInitials(name);
+      
+      const topAvatar = document.getElementById('topAvatar');
+      const heroAvatar = document.getElementById('heroAvatar');
+      const removeMenuItem = document.getElementById('removePhotoMenuItem');
+
+      if (savedImage) {
+        if (topAvatar) { topAvatar.style.backgroundImage = `url(${savedImage})`; topAvatar.innerText = ''; }
+        if (heroAvatar) { heroAvatar.style.backgroundImage = `url(${savedImage})`; heroAvatar.innerText = ''; }
+        if (removeMenuItem) removeMenuItem.style.display = 'flex';
+      } else {
+        if (topAvatar) { topAvatar.style.backgroundImage = 'none'; topAvatar.innerText = initials; }
+        if (heroAvatar) { heroAvatar.style.backgroundImage = 'none'; heroAvatar.innerText = initials; }
+        if (removeMenuItem) removeMenuItem.style.display = 'none';
+      }
+    }
+
+    function handleAvatarUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        alert('⚠ Image size should be less than 2MB!');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Image = e.target.result;
+        localStorage.setItem(`synqora_avatar_${currentUserId}`, base64Image);
+        const userName = document.getElementById('heroFullName').innerText;
+        applySavedAvatar(userName);
+        alert('✅ Profile Picture Updated Successfully!');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeCustomAvatar() {
+      localStorage.removeItem(`synqora_avatar_${currentUserId}`);
+      const userName = document.getElementById('heroFullName').innerText;
+      applySavedAvatar(userName);
+      alert('Custom profile picture removed.');
+    }
+
+    async function loadUserProfile() {
+      if (!currentUserId) return;
+      try {
+        const response = await fetch(`${API_BASE}/api/user/${currentUserId}/profile`, {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const result = await response.json();
+
+        if (result.success) {
+          const user = result.user;
+          const passports = result.passports || [];
+
+          document.getElementById('heroFullName').innerText = user.full_name;
+          document.getElementById('heroHeadline').innerText = `${user.university || 'Student'} | Engineer @ Synqora`;
+          document.getElementById('passportCountBadge').innerText = `✓ ${passports.length} VERIFIED PASSPORT${passports.length === 1 ? '' : 'S'}`;
+
+          applySavedAvatar(user.full_name);
+
+          if (targetUserId && targetUserId != loggedInUserId) {
+            const editCard = document.getElementById('editProfileCardContainer');
+            if (editCard) {
+              editCard.innerHTML = `
+                <div class="section-title"><span>Candidate Overview</span></div>
+                <p style="color: #A0AEC0; font-size: 0.9rem; line-height: 1.5;">
+                  You are viewing official verified records for <strong style="color: #00F0FF;">${user.full_name}</strong>. 
+                  Account settings and edits are restricted to the account owner.
+                </p>
+                <div style="margin-top: 1.5rem;">
+                  <a href="teammates.html" class="btn-save-glow" style="display: inline-block; text-align: center; text-decoration: none; width: 100%;">← Back to Teammate Matchmaker</a>
+                </div>
+              `;
+            }
+          } else {
+            document.getElementById('editFullName').value = user.full_name || '';
+            document.getElementById('editUniversity').value = user.university || '';
+            document.getElementById('editEmail').value = user.email || '';
+          }
+
+          const passportsContainer = document.getElementById('passportsContainer');
+          if (passports.length === 0) {
+            passportsContainer.innerHTML = `
+              <div style="color: #A0AEC0; font-size: 0.85rem; padding: 0.5rem 0;">
+                No passports earned yet.
+              </div>
+            `;
+          } else {
+            passportsContainer.innerHTML = passports.map(p => `
+              <div class="passport-badge-item">
+                <div>
+                  <div style="font-weight: 800; color: #FFF; font-size: 0.95rem;">${p.skill_name}</div>
+                  <div style="font-size: 0.75rem; color: #00FF87;">Score: ${parseFloat(p.score_percentage).toFixed(1)}% (${p.grade})</div>
+                </div>
+                <a href="passport.html?hash=${p.hash_key}" style="font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; color: #00F0FF; text-decoration: none;">
+                  #${p.hash_key.substring(0, 10)} →
+                </a>
+              </div>
+            `).join('');
+
+            document.getElementById('shareUrlBox').innerText = `${window.location.origin}/passport.html?hash=${passports[0].hash_key}`;
+          }
+
+        } else {
+          console.error("Failed to load user profile:", result.message);
+        }
+      } catch (err) {
+        console.error("Backend Error:", err);
+      }
+    }
+
+    async function handleProfileUpdate(e) {
+      e.preventDefault();
+      const saveBtn = document.getElementById('saveProfileBtn');
+      const originalText = saveBtn.innerText;
+      
+      const updatedName = document.getElementById('editFullName').value;
+      const updatedUniv = document.getElementById('editUniversity').value;
+      const updatedEmail = document.getElementById('editEmail').value;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/user/${currentUserId}/update`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            full_name: updatedName,
+            university: updatedUniv,
+            email: updatedEmail
+          })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          const stored = localStorage.getItem('synqora_user');
+          if (stored) {
+            try {
+              const uObj = JSON.parse(stored);
+              uObj.full_name = updatedName;
+              uObj.email = updatedEmail;
+              localStorage.setItem('synqora_user', JSON.stringify(uObj));
+            } catch (ex) {
+              console.error(ex);
+            }
+          }
+
+          saveBtn.innerText = 'Saved Successfully! ✓';
+          saveBtn.style.background = 'linear-gradient(135deg, #00FF87 0%, #00F0FF 100%)';
+          
+          setTimeout(() => {
+            saveBtn.innerText = originalText;
+            saveBtn.style.background = 'linear-gradient(135deg, #00F0FF 0%, #00F0FF 100%)';
+          }, 2500);
+
+          loadUserProfile();
+        } else {
+          alert('Failed to update profile: ' + result.message);
+        }
+      } catch (err) {
+        console.error("Update Error:", err);
+        alert('Server connection failed.');
+      }
+    }
+
+    function openShareModal() {
+      document.getElementById('shareModal').style.display = 'flex';
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').style.display = 'none';
+    }
+
+    function copyShareLink() {
+      const linkText = document.getElementById('shareUrlBox').innerText;
+      navigator.clipboard.writeText(linkText);
+      alert('Link Copied to Clipboard! 📋');
+      closeShareModal();
+    }
+
+    // SOCIAL CONNECT & REDIRECT LOGIC
+    function handleSocialClick(platform) {
+      const key = `synqora_${platform}_${currentUserId}`;
+      const existingUrl = localStorage.getItem(key);
+
+      if (existingUrl) {
+        window.open(existingUrl, '_blank');
+      } else {
+        const url = prompt(`Enter your ${platform === 'github' ? 'GitHub' : 'LinkedIn'} profile URL:`, `https://${platform}.com/username`);
+        if (url && url.trim() && url !== `https://${platform}.com/username`) {
+          localStorage.setItem(key, url.trim());
+          updateSocialButtonsUI();
+          alert(`✅ ${platform.toUpperCase()} profile connected successfully!`);
+        }
+      }
+    }
+
+    function updateSocialButtonsUI() {
+      const gh = localStorage.getItem(`synqora_github_${currentUserId}`);
+      const li = localStorage.getItem(`synqora_linkedin_${currentUserId}`);
+      
+      const ghEl = document.getElementById('githubStatusText');
+      const liEl = document.getElementById('linkedinStatusText');
+      
+      if (gh && ghEl) { 
+        ghEl.innerText = 'Connected ✓'; 
+        ghEl.style.color = '#00FF87'; 
+      } else if (ghEl) {
+        ghEl.innerText = '+ Connect';
+        ghEl.style.color = '#00F0FF';
+      }
+
+      if (li && liEl) { 
+        liEl.innerText = 'Connected ✓'; 
+        liEl.style.color = '#00FF87'; 
+      } else if (liEl) {
+        liEl.innerText = '+ Connect';
+        liEl.style.color = '#00F0FF';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => { 
+      loadUserProfile(); 
+      updateSocialButtonsUI(); 
+    });
+  </script>
+
+  <!-- CENTRAL APP SCRIPT -->
+  <script src="js/app.js"></script>
+
+</body>
+</html>

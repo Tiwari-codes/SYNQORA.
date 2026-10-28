@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synqora — Skill-Verified Synergy for Elite Engineering Teams</title>
+  
+  <!-- GLOBAL CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+    :root {
+      --bg-primary: #090D16;
+      --bg-secondary: #131B2E;
+      --bg-card: #182238;
+      --border-slate: #24324D;
+      --text-primary: #FFFFFF;
+      --text-secondary: #A0AEC0;
+      --accent-cyan: #00F0FF;
+      --accent-cyan-glow: rgba(0, 240, 255, 0.4);
+      --accent-emerald: #00FF87;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary) !important;
+      color: var(--text-primary) !important;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Fixed Top Navigation Bar */
+    .landing-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: rgba(19, 27, 46, 0.95);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid #24324D;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4rem;
+      z-index: 1000;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      text-decoration: none;
+    }
+
+    /* Animated Ultra-Premium Logo */
+    .brand-logo-wrapper {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-logo-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 12px #00F0FF);
+      transition: transform 0.3s ease;
+    }
+
+    .brand-container:hover .brand-logo-svg {
+      transform: scale(1.08) rotate(5deg);
+    }
+
+    /* Gradient Shimmer Text */
+    .brand-text {
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #FFFFFF 0%, #00F0FF 50%, #00FF87 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 4s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #A0AEC0;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: #00F0FF;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      padding: 210px 2rem 70px;
+      text-align: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.55rem 1.6rem;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid #00F0FF;
+      border-radius: 9999px;
+      color: #00F0FF;
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
+    }
+
+    .hero-title {
+      font-size: 4rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+      color: #FFFFFF;
+      letter-spacing: -1px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #00F0FF 0%, #00FF87 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.4));
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: #A0AEC0;
+      max-width: 780px;
+      margin: 0 auto 2.8rem;
+      line-height: 1.65;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+
+    /* Live Protocol Metrics Banner */
+    .metrics-banner {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      background: #131B2E;
+      border: 1px solid #24324D;
+      border-radius: 18px;
+      padding: 2rem;
+      margin-bottom: 4rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .metric-item {
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #00F0FF;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.2rem;
+    }
+
+    .metric-label {
+      font-size: 0.88rem;
+      color: #A0AEC0;
+      font-weight: 600;
+    }
+
+    /* Feature Grid */
+    .section-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 2rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-title {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-subtitle {
+      color: #A0AEC0;
+      font-size: 1.1rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      padding: 2.25rem;
+      background: #131B2E;
+      border: 1px solid #24324D;
+      border-radius: 18px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .feature-card:hover {
+      border-color: #00F0FF;
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 240, 255, 0.2);
+    }
+
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid #00F0FF;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      color: #00F0FF;
+    }
+
+    .feature-icon svg {
+      width: 26px;
+      height: 26px;
+      stroke: #00F0FF;
+      fill: none;
+      stroke-width: 2.2;
+    }
+
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+    }
+
+    .flow-step-card {
+      background: #090D16;
+      border: 1px solid #24324D;
+      border-radius: 14px;
+      padding: 1.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .flow-step-card:hover {
+      border-color: #00FF87;
+    }
+
+    .step-num {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: #00FF87;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.5rem;
+    }
+
+    .landing-footer {
+      border-top: 1px solid #24324D;
+      background: #131B2E;
+      padding: 3rem 2rem;
+      margin-top: 80px;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="landing-nav">
+    <a href="index.html" class="brand-container">
+      <div class="brand-logo-wrapper">
+        <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none">
+          <polygon points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5" stroke="#00F0FF" stroke-width="6" fill="rgba(0, 240, 255, 0.12)"/>
+          <polygon points="50,20 75,34.5 75,65.5 50,80 25,65.5 25,34.5" stroke="#00FF87" stroke-width="4" fill="none"/>
+          <circle cx="50" cy="50" r="9" fill="#00F0FF"/>
+        </svg>
+      </div>
+      <span class="brand-text">SYNQORA</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#updates">Protocol Architecture</a></li>
+    </ul>
+
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <a href="login.html" class="btn btn-secondary" style="padding: 0.7rem 1.4rem;">Login</a>
+      <a href="register.html" class="btn btn-primary" style="padding: 0.7rem 1.4rem;">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section">
+    <div class="hero-pill">⚡ CONNECT · VERIFY · UNITE</div>
+    <h1 class="hero-title">Build teams around <span>verified skills.</span></h1>
+    <p class="hero-subtitle">
+      Students discover complementary teammates, verify capabilities through adaptive 2-round AI assessments, and assemble elite project engineering teams.
+    </p>
+
+    <div class="hero-cta-group">
+      <a href="register.html" class="btn btn-primary" style="padding: 1rem 2.2rem; font-size: 1.05rem;">
+        Get Started / Register 🚀
+      </a>
+      <a href="teammates.html" class="btn btn-secondary" style="padding: 1rem 2.2rem; font-size: 1.05rem;">
+        Find Teammates 🔍
+      </a>
+    </div>
+
+    <!-- Live Protocol Metrics Banner -->
+    <div id="updates" class="metrics-banner">
+      <div class="metric-item">
+        <div class="metric-value">2-Round</div>
+        <div class="metric-label">AI Verification Engine</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-value">100%</div>
+        <div class="metric-label">Proven Capability Matching</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-value">Dynamic</div>
+        <div class="metric-label">Skill Gap Compatibility</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-value">Verified</div>
+        <div class="metric-label">Cryptographic Passports</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES SECTION -->
+  <section id="features" class="section-container">
+    <div class="section-header">
+      <h2 class="section-title">Engineered for Skill Transparency</h2>
+      <p class="section-subtitle">Eliminate resume friction and build teams based on proven code capabilities.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div>
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <h3 style="font-size: 1.35rem; color: #FFFFFF; margin-bottom: 0.75rem;">2-Round AI Verification</h3>
+          <p style="color: #A0AEC0; line-height: 1.6; margin-bottom: 1.5rem;">
+            Rigorous dynamic screening covering technical concepts, code analysis, debugging, and industry scenario evaluations.
+          </p>
+        </div>
+        <a href="skills.html" class="btn btn-secondary" style="width: 100%;">Explore Verification →</a>
+      </div>
+
+      <div class="feature-card">
+        <div>
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h3 style="font-size: 1.35rem; color: #FFFFFF; margin-bottom: 0.75rem;">Explainable Matchmaking</h3>
+          <p style="color: #A0AEC0; line-height: 1.6; margin-bottom: 1.5rem;">
+            Discover candidates based on complementary skill gap analysis, verified proficiency scores, and role coverage.
+          </p>
+        </div>
+        <a href="teammates.html" class="btn btn-secondary" style="width: 100%;">Find Teammates →</a>
+      </div>
+
+      <div class="feature-card">
+        <div>
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h3 style="font-size: 1.35rem; color: #FFFFFF; margin-bottom: 0.75rem;">Connected Invites</h3>
+          <p style="color: #A0AEC0; line-height: 1.6; margin-bottom: 1.5rem;">
+            Send project recruitment invites, accept candidates, and automatically sync project rosters in real-time.
+          </p>
+        </div>
+        <a href="projects.html" class="btn btn-secondary" style="width: 100%;">Start Building →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works" class="section-container" style="background: #131B2E; border-radius: 20px; border: 1px solid #24324D;">
+    <div class="section-header">
+      <h2 class="section-title">How Synqora Protocol Works</h2>
+      <p class="section-subtitle">A seamless 5-step journey from skill assessment to team launch.</p>
+    </div>
+
+    <div class="flow-steps">
+      <div class="flow-step-card">
+        <div class="step-num">01</div>
+        <h4 style="color: #FFFFFF; margin-bottom: 0.4rem;">Profile Setup</h4>
+        <p style="font-size: 0.88rem; color: #A0AEC0;">Create your student developer profile.</p>
+      </div>
+
+      <div class="flow-step-card">
+        <div class="step-num">02</div>
+        <h4 style="color: #FFFFFF; margin-bottom: 0.4rem;">AI Verification</h4>
+        <p style="font-size: 0.88rem; color: #A0AEC0;">Pass 2-Round AI assessments to claim verified badges.</p>
+      </div>
+
+      <div class="flow-step-card">
+        <div class="step-num">03</div>
+        <h4 style="color: #FFFFFF; margin-bottom: 0.4rem;">Smart Matching</h4>
+        <p style="font-size: 0.88rem; color: #A0AEC0;">Filter teammates based on verified skill gap compatibility.</p>
+      </div>
+
+      <div class="flow-step-card">
+        <div class="step-num">04</div>
+        <h4 style="color: #FFFFFF; margin-bottom: 0.4rem;">Team Request</h4>
+        <p style="font-size: 0.88rem; color: #A0AEC0;">Dispatch project join invites to verified candidates.</p>
+      </div>
+
+      <div class="flow-step-card">
+        <div class="step-num">05</div>
+        <h4 style="color: #FFFFFF; margin-bottom: 0.4rem;">Unite & Build</h4>
+        <p style="font-size: 0.88rem; color: #A0AEC0;">Form official team rosters and execute projects together.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="landing-footer">
+    <div class="footer-content">
+      <div>
+        <a href="index.html" class="brand-container">
+          <span class="brand-text" style="font-size: 1.3rem;">SYNQORA</span>
+        </a>
+        <p style="color: #64748B; font-size: 0.88rem; margin-top: 0.4rem;">Skill-Verified Synergy for Elite Student Teams.</p>
+      </div>
+      <div style="color: #64748B; font-size: 0.88rem;">
+        © 2026 Synqora Protocol. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- EXTERNAL UTILITY LIBRARIES -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- CENTRAL APP SCRIPT -->
+  <script src="js/app.js"></script>
+
+</body>
+</html>

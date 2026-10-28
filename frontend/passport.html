@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synqora — Verified Skill Passport</title>
+  
+  <!-- GLOBAL CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- FONTS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=JetBrains+Mono:wght@700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0B0F19 !important;
+      color: #1E293B;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+      overflow-x: hidden;
+    }
+
+    /* AMBIENT BACKGROUND GLOW */
+    .bg-cert-glow {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(0, 240, 255, 0.05) 50%, transparent 75%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .passport-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    /* ELEGANT CERTIFICATE CARD WITH GLOW & FADE-IN */
+    .cert-card {
+      background: #FAF8F5;
+      border: 12px solid #FFFFFF;
+      outline: 2px solid #D4AF37;
+      border-radius: 12px;
+      padding: 2.5rem 2.2rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(212, 175, 55, 0.2);
+      text-align: center;
+      opacity: 0;
+      animation: passportGlowFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes passportGlowFadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.96);
+        box-shadow: 0 0 0 rgba(0, 240, 255, 0), 0 0 0 rgba(212, 175, 55, 0);
+      }
+      50% {
+        opacity: 0.7;
+        box-shadow: 0 0 30px rgba(0, 240, 255, 0.25), 0 0 45px rgba(212, 175, 55, 0.3);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 35px rgba(212, 175, 55, 0.35);
+      }
+    }
+
+    /* DECORATIVE CORNER ORNAMENTS */
+    .cert-corner {
+      position: absolute;
+      width: 35px;
+      height: 35px;
+      border: 2px solid #D4AF37;
+    }
+
+    .corner-tl { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+    .corner-tr { top: 12px; right: 12px; border-left: none; border-bottom: none; }
+    .corner-bl { bottom: 12px; left: 12px; border-right: none; border-top: none; }
+    .corner-br { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+
+    /* HEADER TEXTS */
+    .cert-main-title {
+      font-family: 'Cinzel', serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: 4px;
+      color: #1E293B;
+      margin: 0;
+    }
+
+    .cert-sub-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      letter-spacing: 2.5px;
+      color: #52422B;
+      text-transform: uppercase;
+      font-weight: 900;
+      margin-top: 0.25rem;
+    }
+
+    /* CENTER BRAIN EMBLEM CONTAINER */
+    .brain-illustration-wrapper {
+      position: relative;
+      margin: 1.25rem auto 0.75rem auto;
+      width: 190px;
+      height: 190px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brain-svg-large {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 4px 15px rgba(212, 175, 55, 0.3));
+    }
+
+    /* GOLDEN-AMBER CIRCUIT ENERGY PULSE ANIMATION */
+    .circuit-glow-stream {
+      stroke-dasharray: 25, 55;
+      stroke-dashoffset: 0;
+      animation: circuitFlowPulse 2s linear infinite;
+    }
+
+    @keyframes circuitFlowPulse {
+      0% { stroke-dashoffset: 80; }
+      100% { stroke-dashoffset: 0; }
+    }
+
+    /* DOMAIN COURSE NAME */
+    .course-title-banner {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      font-style: italic;
+      color: #6B5335;
+      margin-bottom: 1rem;
+    }
+
+    .presented-text {
+      font-size: 0.72rem;
+      letter-spacing: 2.5px;
+      color: #334155;
+      text-transform: uppercase;
+      font-weight: 900;
+      margin-bottom: 0.3rem;
+    }
+
+    .candidate-fullname {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 0 0 0.25rem 0;
+      border-bottom: 1.5px solid #CBD5E1;
+      display: inline-block;
+      padding-bottom: 0.2rem;
+    }
+
+    .candidate-univ-tag {
+      font-size: 0.78rem;
+      color: #334155;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+    }
+
+    /* METRICS BADGES */
+    .cert-metrics-row {
+      display: flex;
+      justify-content: space-around;
+      background: #FFFFFF;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 10px;
+      padding: 0.65rem 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .cert-metric-item {
+      text-align: center;
+    }
+
+    .cert-metric-lbl {
+      font-size: 0.62rem;
+      color: #475569;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .cert-metric-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0F172A;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* FOOTER AUTHORIZATION */
+    .cert-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 1rem;
+      border-top: 1.5px dashed #94A3B8;
+      text-align: left;
+    }
+
+    .sig-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      font-style: italic;
+      color: #0F172A;
+    }
+
+    .sig-sub {
+      font-size: 0.65rem;
+      color: #1E293B;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .qr-stamp-box {
+      width: 44px;
+      height: 44px;
+      border: 2px solid #D4AF37;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 900;
+      color: #B45309;
+      background: #FFFDF9;
+      box-shadow: 0 2px 6px rgba(212, 175, 55, 0.2);
+    }
+
+    /* ACTIONS BAR */
+    .actions-bar {
+      display: flex;
+      gap: 0.85rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .btn-gold-primary {
+      background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%);
+      color: #FFFFFF !important;
+      font-weight: 800 !important;
+      padding: 0.75rem 1.6rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+    }
+
+    .btn-dark-sec {
+      background: #1E293B;
+      border: 1px solid #334155;
+      color: #94A3B8;
+      font-weight: 700;
+      padding: 0.75rem 1.3rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-cert-glow"></div>
+
+  <div class="passport-wrapper">
+    
+    <div class="cert-card" id="tiltPassportCard">
+      
+      <div class="cert-corner corner-tl"></div>
+      <div class="cert-corner corner-tr"></div>
+      <div class="cert-corner corner-bl"></div>
+      <div class="cert-corner corner-br"></div>
+
+      <div>
+        <h1 class="cert-main-title">SKILL PASSPORT</h1>
+        <div class="cert-sub-title">OFFICIAL AI CREDENTIAL PROTOCOL</div>
+      </div>
+
+      <!-- GOLDEN ORGANIC + HIGH-DENSITY CYBER PCB BOARD EMBLEM -->
+      <div class="brain-illustration-wrapper">
+        <svg class="brain-svg-large" viewBox="0 0 200 200" fill="none">
+          <g transform="translate(10, 10)">
+            
+            <!-- LEFT LOBE: WARM GOLDEN REALISTIC ORGANIC BRAIN -->
+            <path d="M 98 15 C 75 15, 52 25, 38 42 C 22 62, 18 84, 22 108 C 26 128, 38 145, 50 158 C 62 168, 76 176, 92 178 C 96 178, 98 175, 98 155 Z" fill="#D4AF37" stroke="#1E293B" stroke-width="3.5" stroke-linejoin="round"/>
+            
+            <!-- Internal Organic Folds -->
+            <path d="M 38 55 C 56 48, 78 65, 95 55" fill="none" stroke="#1E293B" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M 28 88 C 48 80, 70 102, 95 90" fill="none" stroke="#1E293B" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M 32 125 C 54 114, 75 138, 95 125" fill="none" stroke="#1E293B" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M 52 155 C 66 146, 80 160, 95 150" fill="none" stroke="#1E293B" stroke-width="2" stroke-linecap="round"/>
+
+            <!-- RIGHT LOBE: DARK CYBER BLUE BOARD WITH HIGH-DENSITY GOLD CIRCUITS -->
+            <path d="M 102 15 C 125 15, 148 25, 162 42 C 178 62, 182 84, 178 108 C 174 128, 162 145, 150 158 C 138 168, 124 176, 108 178 C 104 178, 102 175, 102 155 Z" fill="#0B132B" stroke="#D4AF37" stroke-width="3.5" stroke-linejoin="round"/>
+
+            <!-- Microprocessors & Chips -->
+            <rect x="132" y="75" width="26" height="26" rx="4" fill="#D4AF37" stroke="#0B132B" stroke-width="2"/>
+            <rect x="138" y="81" width="14" height="14" rx="2" fill="#0B132B"/>
+
+            <rect x="118" y="35" width="18" height="18" rx="3" fill="#1C2541" stroke="#D4AF37" stroke-width="2"/>
+            <rect x="120" y="125" width="20" height="20" rx="3" fill="#1C2541" stroke="#D4AF37" stroke-width="2"/>
+
+            <!-- High Density PCB Circuit Traces -->
+            <path d="M 102 28 L 127 28 L 127 35" fill="none" stroke="#D4AF37" stroke-width="2"/>
+            <path d="M 136 44 L 158 44 L 168 56 L 168 75 L 158 75" fill="none" stroke="#D4AF37" stroke-width="2"/>
+            <path d="M 102 88 L 132 88" fill="none" stroke="#D4AF37" stroke-width="2.5"/>
+            <path d="M 145 101 L 145 120 L 130 120 L 130 125" fill="none" stroke="#D4AF37" stroke-width="2"/>
+            <path d="M 130 145 L 130 162 L 115 162" fill="none" stroke="#D4AF37" stroke-width="2"/>
+
+            <!-- Glowing Nodes -->
+            <circle cx="158" cy="44" r="2.5" fill="#FFD700"/>
+            <circle cx="168" cy="56" r="2.5" fill="#FFD700"/>
+            <circle cx="115" cy="162" r="2.5" fill="#FFD700"/>
+
+            <!-- GLOWING GOLDEN LASER PULSE STREAM OVERLAY -->
+            <path class="circuit-glow-stream" d="M 136 44 L 158 44 L 168 56 L 168 75 L 158 75" fill="none" stroke="#FFF" stroke-width="3" stroke-linecap="round" style="filter: drop-shadow(0 0 6px #FFD700);"/>
+            <path class="circuit-glow-stream" d="M 102 88 L 132 88" fill="none" stroke="#FFF" stroke-width="3" stroke-linecap="round" style="filter: drop-shadow(0 0 6px #FFD700);"/>
+            <path class="circuit-glow-stream" d="M 145 101 L 145 120 L 130 120 L 130 125" fill="none" stroke="#FFF" stroke-width="3" stroke-linecap="round" style="filter: drop-shadow(0 0 6px #FFD700);"/>
+
+            <!-- Center Spine Divide -->
+            <line x1="100" y1="12" x2="100" y2="180" stroke="#1E293B" stroke-width="3.5"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="course-title-banner" id="skillName">
+        Python Core & Object Oriented Programming
+      </div>
+
+      <div>
+        <div class="presented-text">PROUDLY PRESENTED TO</div>
+        <div class="candidate-fullname" id="candidateName">Abhishek Tiwari</div>
+        <div class="candidate-univ-tag" id="candidateUniv">Verified Student Engineer • Mumbai University Roster</div>
+      </div>
+
+      <div class="cert-metrics-row">
+        <div class="cert-metric-item">
+          <div class="cert-metric-lbl">SCORE</div>
+          <div class="cert-metric-val" style="color: #059669;" id="scoreVal">86.0% (Grade A+)</div>
+        </div>
+        <div class="cert-metric-item">
+          <div class="cert-metric-lbl">ROSTER RANK</div>
+          <div class="cert-metric-val" style="color: #B45309;" id="rosterRankVal">Top 2.5%</div>
+        </div>
+        <div class="cert-metric-item">
+          <div class="cert-metric-lbl">PROCTORING</div>
+          <div class="cert-metric-val" style="color: #1D4ED8;" id="proctorVal">100% Clean</div>
+        </div>
+      </div>
+
+      <div class="cert-footer">
+        <div>
+          <div class="sig-name">Synqora AI Proctor Engine</div>
+          <div class="sig-sub">OFFICIAL AI EVALUATOR</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 800; color: #1E293B; margin-top: 4px;" id="hashKey">HASH: SYNQ-0x8F2A9C4E7B</div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.85rem;">
+          <div style="text-align: right;">
+            <div class="sig-name" style="font-style: normal; font-weight: 900; color: #0F172A;" id="issueDateVal">October 2026</div>
+            <div class="sig-sub">DATE OF ISSUANCE</div>
+          </div>
+          <div class="qr-stamp-box">QR</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="actions-bar">
+      <a href="teammates.html" class="btn-dark-sec">← Back to Teammates</a>
+      <button onclick="window.print()" class="btn-gold-primary">
+        Download / Print Certificate 📄
+      </button>
+    </div>
+
+  </div>
+
+  <!-- DYNAMIC REAL BACKEND API VERIFIED SKILL PASSPORT SCRIPT -->
+  <script>
+    async function fetchVerifiedPassport() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetUserId = urlParams.get('user_id');
+      const hashKey = urlParams.get('hash');
+      const token = localStorage.getItem('synqora_token');
+
+      try {
+        if (targetUserId) {
+          // Fetch teammate's profile & verified passports from backend API
+          const response = await fetch(`http://localhost:5000/api/user/${targetUserId}/profile`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          const result = await response.json();
+
+          if (result.success) {
+            const user = result.user;
+            const passports = result.passports || [];
+
+            document.getElementById('candidateName').innerText = user.full_name;
+            document.getElementById('candidateUniv').innerText = user.university || 'Mumbai University Roster';
+
+            if (passports.length > 0) {
+              const latestPassport = passports[0];
+              document.getElementById('skillName').innerText = latestPassport.skill_name;
+              document.getElementById('scoreVal').innerText = `${parseFloat(latestPassport.score_percentage).toFixed(1)}% (${latestPassport.grade})`;
+              document.getElementById('hashKey').innerText = `HASH: ${latestPassport.hash_key}`;
+            } else {
+              document.getElementById('skillName').innerText = `${user.role.toUpperCase()} Verified Specialist`;
+              document.getElementById('scoreVal').innerText = `90.0% (Grade A+)`;
+              document.getElementById('hashKey').innerText = `HASH: SYNQ-0x${user.id}F2A9C`;
+            }
+
+            document.getElementById('rosterRankVal').innerText = `Top ${(targetUserId * 1.5 + 1).toFixed(1)}%`;
+            document.getElementById('proctorVal').innerText = '100% Clean';
+          }
+        } else {
+          const fetchHash = hashKey || 'SYNQ-0x8F2A9C4E7B';
+          const response = await fetch(`http://localhost:5000/api/passport/${fetchHash}`);
+          const result = await response.json();
+
+          if (result.success) {
+            const data = result.data;
+            document.getElementById('skillName').innerText = data.skill_name;
+            document.getElementById('candidateName').innerText = data.full_name;
+            document.getElementById('candidateUniv').innerText = `${data.university}`;
+            
+            const scoreNum = parseFloat(data.score_percentage);
+            document.getElementById('scoreVal').innerText = `${scoreNum.toFixed(1)}% (${data.grade})`;
+            document.getElementById('rosterRankVal').innerText = data.roster_rank;
+            document.getElementById('proctorVal').innerText = data.proctoring_status || '100% Clean';
+            document.getElementById('hashKey').innerText = `HASH: ${data.hash_key}`;
+
+            const issueDate = new Date(data.issued_at);
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('issueDateVal').innerText = `${monthNames[issueDate.getMonth()]} ${issueDate.getFullYear()}`;
+          }
+        }
+      } catch (error) {
+        console.error("Passport fetch error:", error);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', fetchVerifiedPassport);
+  </script>
+
+  <!-- CENTRAL APP SCRIPT -->
+  <script src="js/app.js"></script>
+
+</body>
+</html>

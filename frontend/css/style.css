@@ -1,0 +1,412 @@
+/* =========================================================
+   SYNQORA — MASTER OBSIDIAN CYBER DESIGN SYSTEM
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+:root {
+  --bg-primary: #090D16;
+  --bg-secondary: #131B2E;
+  --bg-card: #182238;
+  --bg-input: #0E1626;
+
+  --border-slate: #24324D;
+  --border-glow: rgba(0, 240, 255, 0.4);
+
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --text-muted: #64748B;
+
+  --accent-cyan: #00F0FF;
+  --accent-cyan-glow: rgba(0, 240, 255, 0.35);
+  --accent-emerald: #00FF87;
+  --accent-warning: #FFB800;
+  --accent-crimson: #FF3366;
+
+  --sidebar-width: 260px;
+  --topbar-height: 75px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Base Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.6rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #00F0FF 0%, #0072FF 100%);
+  color: #000000;
+  box-shadow: 0 0 20px var(--accent-cyan-glow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-slate);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-card);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.btn-success {
+  background: var(--accent-emerald);
+  color: #000;
+  font-weight: 700;
+}
+
+/* APP LAYOUT STRUCTURE */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* SIDEBAR */
+.app-sidebar {
+  width: var(--sidebar-width);
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-slate);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  padding: 1.5rem 1rem;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.sidebar-logo {
+  width: 36px !important;
+  height: 36px !important;
+  max-width: 36px !important;
+  filter: drop-shadow(0 0 8px var(--accent-cyan));
+}
+
+.sidebar-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #FFF;
+}
+
+.sidebar-menu {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.nav-item a {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-item a svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--text-secondary);
+  fill: none;
+  stroke-width: 2;
+}
+
+.nav-item.active a, .nav-item a:hover {
+  background: rgba(0, 240, 255, 0.1);
+  color: var(--accent-cyan);
+}
+
+.nav-item.active a svg, .nav-item a:hover svg {
+  stroke: var(--accent-cyan);
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+}
+
+/* MAIN CONTENT AREA */
+.app-main {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-topbar {
+  height: var(--topbar-height);
+  background: rgba(19, 27, 46, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-slate);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+.topbar-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #FFF;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-slate);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: var(--accent-cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent-cyan);
+}
+
+.user-profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-slate);
+  padding: 0.4rem 0.85rem 0.4rem 0.5rem;
+  border-radius: 30px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #00F0FF, #0072FF);
+  color: #000;
+  font-weight: 800;
+  font-size: 0.85rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #FFF;
+}
+
+.content-body {
+  padding: 2.5rem;
+}
+
+/* BADGES */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.badge-verified {
+  background: rgba(0, 255, 135, 0.12);
+  color: #00FF87;
+  border: 1px solid rgba(0, 255, 135, 0.3);
+}
+
+.badge-pending {
+  background: rgba(255, 184, 0, 0.12);
+  color: #FFB800;
+  border: 1px solid rgba(255, 184, 0, 0.3);
+}
+
+/* PASSPORT GLOWING & SMOOTH FADE-IN ANIMATION */
+@keyframes passportGlowFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(25px) scale(0.96);
+    box-shadow: 0 0 0 rgba(0, 240, 255, 0), 0 0 0 rgba(212, 175, 55, 0);
+  }
+  50% {
+    opacity: 0.7;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.25), 0 0 45px rgba(212, 175, 55, 0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 35px rgba(212, 175, 55, 0.35);
+  }
+}
+
+.cert-card {
+  animation: passportGlowFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ============================================================
+   RESPONSIVE MEDIA QUERIES (Mobile & Tablet Fixes)
+   ============================================================ */
+@media (max-width: 992px) {
+  .dashboard-container, .skills-container, .requests-container {
+    padding: 0 1rem;
+  }
+  .verify-box-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .verify-input-group {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+  }
+  .controls-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-input-box {
+    width: 100%;
+  }
+  .skills-grid, .passports-list, .metrics-grid, .details-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .passport-body {
+    grid-template-columns: 1fr !important;
+    text-align: center;
+  }
+  .action-btn-group {
+    flex-direction: column;
+  }
+  .request-card {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .action-btns {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 900px) {
+  .app-container {
+    flex-direction: column;
+  }
+  .app-sidebar {
+    position: relative;
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-slate);
+    padding: 1rem;
+    z-index: 100;
+  }
+  .sidebar-brand {
+    margin-bottom: 0.75rem;
+  }
+  .sidebar-menu {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .nav-item a {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.82rem;
+  }
+  .sidebar-bottom {
+    margin-top: 0.5rem;
+  }
+  .app-main {
+    margin-left: 0 !important;
+  }
+  .app-topbar {
+    padding: 0 1.25rem;
+    height: auto;
+    min-height: 65px;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+  .content-body {
+    padding: 1.25rem !important;
+  }
+}

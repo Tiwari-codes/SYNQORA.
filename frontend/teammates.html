@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synqora — AI Teammate Matchmaker</title>
+
+  <!-- GLOBAL CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    .sidebar-logo {
+      width: 36px !important;
+      height: 36px !important;
+      max-width: 36px !important;
+    }
+
+    .content-body {
+      padding: 1.8rem 2.5rem !important;
+    }
+
+    /* CONTROLS & FILTER BAR */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      background: #131B2E;
+      border: 1px solid #24324D;
+      border-radius: 16px;
+      padding: 1rem 1.25rem;
+    }
+
+    .role-pills-group {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .pill-btn {
+      background: #090D16;
+      border: 1px solid #24324D;
+      color: #A0AEC0;
+      padding: 0.55rem 1.1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pill-btn:hover, .pill-btn.active {
+      background: rgba(0, 240, 255, 0.12);
+      border-color: #00F0FF;
+      color: #00F0FF;
+    }
+
+    .search-input-field {
+      flex: 1;
+      min-width: 240px;
+      background: #090D16;
+      border: 1px solid #24324D;
+      color: #FFFFFF;
+      padding: 0.75rem 1.1rem;
+      border-radius: 10px;
+      outline: none;
+      font-size: 0.9rem;
+    }
+
+    .search-input-field:focus {
+      border-color: #00F0FF;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    }
+
+    /* CANDIDATES GRID */
+    .teammates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .candidate-card {
+      background: #131B2E;
+      border: 1px solid #24324D;
+      border-radius: 18px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+    }
+
+    .candidate-card:hover {
+      border-color: #00F0FF;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 240, 255, 0.15);
+    }
+
+    .candidate-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00F0FF 0%, #0072FF 100%);
+      color: #000000;
+      font-weight: 800;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .match-percent-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #00FF87;
+    }
+
+    .tag-matched {
+      background: rgba(0, 255, 135, 0.12);
+      color: #00FF87 !important;
+      border: 1px solid rgba(0, 255, 135, 0.3);
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-block;
+      margin-right: 0.3rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .card-links-row {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-link-item {
+      font-size: 0.78rem;
+      color: #00F0FF;
+      text-decoration: none;
+      font-weight: 700;
+      transition: color 0.2s ease;
+    }
+
+    .card-link-item:hover {
+      text-decoration: underline;
+    }
+
+    .btn-action-glow {
+      background: linear-gradient(135deg, #00F0FF 0%, #00FF87 100%) !important;
+      color: #000000 !important;
+      font-weight: 800 !important;
+      padding: 0.75rem;
+      border-radius: 12px;
+      text-align: center;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      font-size: 0.88rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+    }
+
+    .btn-action-glow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
+    }
+
+    /* RECRUIT INVITE MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(9, 13, 22, 0.88);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal-box {
+      background: #131B2E;
+      border: 1px solid #00F0FF;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 480px;
+      padding: 1.75rem;
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.25);
+    }
+
+    /* SLEEK TOAST NOTIFICATION POPUP */
+    .toast-notification {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #131B2E;
+      border: 1px solid #00FF87;
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 10px 30px rgba(0, 255, 135, 0.2);
+      transform: translateY(150%);
+      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 99999;
+      max-width: 400px;
+    }
+
+    .toast-notification.active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="app-sidebar">
+      <a href="dashboard.html" class="sidebar-brand">
+        <svg class="sidebar-logo" viewBox="0 0 100 100" fill="none">
+          <polygon points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5" stroke="#00F0FF" stroke-width="6" fill="rgba(0, 240, 255, 0.12)"/>
+          <polygon points="50,20 75,34.5 75,65.5 50,80 25,65.5 25,34.5" stroke="#00FF87" stroke-width="4" fill="none"/>
+          <circle cx="50" cy="50" r="9" fill="#00F0FF"/>
+        </svg>
+        <span class="sidebar-title">SYNQORA</span>
+      </a>
+
+      <ul class="sidebar-menu">
+        <li class="nav-item">
+          <a href="dashboard.html">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="profile.html">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            My Profile
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="skills.html">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            My Skills
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="projects.html">
+            <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            My Projects
+          </a>
+        </li>
+        <li class="nav-item active">
+          <a href="teammates.html">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Find Teammates
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="requests.html">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Requests
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="chat.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            SyncSpace Chat
+          </a>
+        </li>
+        <li class="nav-item" id="adminNavLink" style="display: none;">
+          <a href="admin-dashboard.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Admin Console
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-bottom">
+        <li class="nav-item" style="list-style: none;">
+          <a href="login.html" onclick="localStorage.removeItem('synqora_user'); localStorage.removeItem('synqora_token');" style="color: #FF3366;">
+            <svg viewBox="0 0 24 24" style="stroke: #FF3366;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Logout
+          </a>
+        </li>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="app-main">
+      <header class="app-topbar">
+        <div>
+          <h2 class="topbar-title">AI Teammate Matchmaker</h2>
+          <p style="font-size: 0.85rem; color: #A0AEC0;">Match with peer engineers based on verified skills and project requirements.</p>
+        </div>
+        <div class="user-profile-badge">
+          <div class="user-avatar" id="topAvatar">AT</div>
+          <span class="user-name" id="topUserName">Abhishek T.</span>
+        </div>
+      </header>
+
+      <div class="content-body">
+        
+        <!-- SEARCH & MULTI-ROLE FILTER BAR -->
+        <div class="controls-bar">
+          <div class="role-pills-group">
+            <button class="pill-btn active" onclick="filterByRole('all', this)">All Roles</button>
+            <button class="pill-btn" onclick="filterByRole('backend', this)">Backend</button>
+            <button class="pill-btn" onclick="filterByRole('frontend', this)">Frontend</button>
+            <button class="pill-btn" onclick="filterByRole('fullstack', this)">Fullstack</button>
+            <button class="pill-btn" onclick="filterByRole('aiml', this)">AI / ML</button>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; flex: 1; justify-content: flex-end;">
+            <input type="text" id="searchInput" class="search-input-field" placeholder="Search by skill (e.g., Python, MySQL, React) or candidate..." oninput="filterTeammates()">
+            <button onclick="filterTeammates()" class="btn-action-glow" style="width: auto; padding: 0.75rem 1.25rem; white-space: nowrap;">Run AI Match 🔍</button>
+          </div>
+        </div>
+
+        <!-- TEAMMATES MATCH GRID -->
+        <div class="teammates-grid" id="teammatesGrid">
+          <!-- Dynamic Database Users will load here -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- RECRUITMENT INVITE MODAL -->
+  <div class="modal-overlay" id="inviteModal">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #24324D; padding-bottom: 0.75rem;">
+        <h3 style="color: #FFF; font-weight: 800;">Recruit Teammate</h3>
+        <button onclick="closeInviteModal()" style="background: none; border: none; color: #A0AEC0; font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <p style="font-size: 0.88rem; color: #A0AEC0; margin-bottom: 1.25rem;">
+        Send official project roster invite to <strong style="color: #00F0FF;" id="targetCandidateName">Candidate</strong>:
+      </p>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #A0AEC0; margin-bottom: 0.4rem;">Select Target Project Roster</label>
+        <select id="projectSelect" style="width: 100%; background: #090D16; border: 1px solid #24324D; color: #FFF; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.9rem; outline: none;">
+          <option value="Synqora Platform">Synqora Platform (Frontend / AI Slots Open)</option>
+          <option value="Outfit Oracle">Outfit Oracle (UI/UX / Fullstack Slots Open)</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #A0AEC0; margin-bottom: 0.4rem;">Personalized Recruitment Note (Optional)</label>
+        <textarea id="invitePitchNote" rows="3" placeholder="e.g. Loved your verified Python badge! Join us to build Synqora's backend." style="width: 100%; background: #090D16; border: 1px solid #24324D; color: #FFF; padding: 0.75rem; border-radius: 10px; font-size: 0.85rem; outline: none; box-sizing: border-box; resize: none;"></textarea>
+      </div>
+
+      <button onclick="sendProjectInvite()" class="btn-action-glow">Send Project Invite 📩</button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-notification" id="toastBox">
+    <div style="font-size: 1.5rem;">📩</div>
+    <div>
+      <div style="font-weight: 800; color: #00FF87; font-size: 0.9rem;" id="toastTitle">Invitation Transmitted</div>
+      <div style="color: #A0AEC0; font-size: 0.78rem; line-height: 1.3;" id="toastMessage">Request dispatched successfully.</div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:5000';
+    let currentCandidate = '';
+    let currentCandidateId = null;
+    let currentRoleFilter = 'all';
+    let loggedInUserName = 'Abhishek Tiwari';
+
+    // Set Topbar User Info from LocalStorage
+    const storedUser = localStorage.getItem('synqora_user');
+    if (storedUser) {
+      try {
+        const u = JSON.parse(storedUser);
+        if (u && u.full_name) {
+          loggedInUserName = u.full_name;
+          document.getElementById('topUserName').innerText = u.full_name;
+          const parts = u.full_name.trim().split(' ');
+          const initials = parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : u.full_name.substring(0, 2).toUpperCase();
+          document.getElementById('topAvatar').innerText = initials;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Fetch Real Users from Database on Page Load
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchTeammates();
+    });
+
+    async function fetchTeammates() {
+      const token = localStorage.getItem('synqora_token');
+      const grid = document.getElementById('teammatesGrid');
+
+      if (!token) {
+        grid.innerHTML = '<p style="color: #A0AEC0; grid-column: 1/-1; text-align: center;">Please sign in to view and match with teammates.</p>';
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/api/users`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.users) {
+          renderTeammates(result.users);
+        } else {
+          grid.innerHTML = '<p style="color: #A0AEC0; grid-column: 1/-1; text-align: center;">No teammates found.</p>';
+        }
+      } catch (err) {
+        console.error('Fetch Teammates Error:', err);
+        grid.innerHTML = '<p style="color: #FF3366; grid-column: 1/-1; text-align: center;">Failed to connect to backend server.</p>';
+      }
+    }
+
+    function renderTeammates(users) {
+      const grid = document.getElementById('teammatesGrid');
+      grid.innerHTML = '';
+
+      if (users.length === 0) {
+        grid.innerHTML = '<p style="color: #A0AEC0; grid-column: 1/-1; text-align: center;">No other users registered yet.</p>';
+        return;
+      }
+
+      users.forEach((user, idx) => {
+        const initials = user.full_name
+          ? user.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+          : 'U';
+        
+        const roleTypes = ['backend', 'frontend', 'fullstack', 'aiml'];
+        const assignedRole = roleTypes[idx % roleTypes.length];
+        const matchPercent = (70 + (user.id * 3) % 25).toFixed(1) + '%';
+
+        // FIXED: Passing specific user_id in links so correct teammate profile/passport opens
+        const cardHTML = `
+          <div class="candidate-card" data-role="${assignedRole}">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.1rem;">
+                <div style="display: flex; gap: 0.85rem; align-items: center;">
+                  <div class="candidate-avatar">${initials}</div>
+                  <div>
+                    <h3 style="color: #FFFFFF; font-size: 1.1rem; font-weight: 800;">${user.full_name}</h3>
+                    <p style="color: #A0AEC0; font-size: 0.8rem;">${user.university || 'Mumbai Univ'} • ${user.email}</p>
+                  </div>
+                </div>
+                <div class="match-percent-badge">${matchPercent}</div>
+              </div>
+
+              <div>
+                <div style="font-size: 0.78rem; color: #A0AEC0; margin-bottom: 0.35rem; font-weight: 600;">Account Role:</div>
+                <span class="tag-matched">${user.role.toUpperCase()} ✓</span>
+              </div>
+
+              <div class="card-links-row" style="margin-top: 1rem;">
+                <a href="passport.html?user_id=${user.id}" class="card-link-item">View Passport 📜</a>
+                <a href="profile.html?user_id=${user.id}" class="card-link-item">View Profile 👤</a>
+              </div>
+            </div>
+
+            <button id="btn-recruit-${user.id}" onclick="openInviteModal('${user.full_name.replace(/'/g, "\\'")}', ${user.id})" class="btn-action-glow">Recruit to Team 🚀</button>
+          </div>
+        `;
+        grid.insertAdjacentHTML('beforeend', cardHTML);
+      });
+    }
+
+    function openInviteModal(name, candidateId) {
+      currentCandidate = name;
+      currentCandidateId = candidateId;
+      document.getElementById('targetCandidateName').innerText = name;
+      document.getElementById('inviteModal').style.display = 'flex';
+    }
+
+    function closeInviteModal() {
+      document.getElementById('inviteModal').style.display = 'none';
+    }
+
+    async function sendProjectInvite() {
+      const selectedProject = document.getElementById('projectSelect').value;
+      const token = localStorage.getItem('synqora_token');
+
+      if (!token) {
+        alert('Please sign in to send project requests.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/api/requests/send`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            receiver_id: currentCandidateId,
+            project_title: selectedProject
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          closeInviteModal();
+          showToast(
+            "Invitation Transmitted 🚀",
+            `${loggedInUserName} has extended an official recruitment invite to ${currentCandidate} for '${selectedProject}'.`
+          );
+
+          const btn = document.getElementById(`btn-recruit-${currentCandidateId}`);
+          if (btn) {
+            btn.innerText = "Request Sent ✓";
+            btn.style.background = "rgba(0, 255, 135, 0.2)";
+            btn.style.color = "#00FF87";
+            btn.disabled = true;
+          }
+        } else {
+          alert(result.message || 'Failed to send invite.');
+        }
+      } catch (err) {
+        console.error('Send Invite Error:', err);
+        alert('Server error while sending invite.');
+      }
+
+      document.getElementById('invitePitchNote').value = '';
+    }
+
+    function showToast(title, message) {
+      const toast = document.getElementById('toastBox');
+      document.getElementById('toastTitle').innerText = title;
+      document.getElementById('toastMessage').innerText = message;
+
+      toast.classList.add('active');
+      setTimeout(() => {
+        toast.classList.remove('active');
+      }, 4500);
+    }
+
+    function filterByRole(role, btn) {
+      currentRoleFilter = role;
+      document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterTeammates();
+    }
+
+    function filterTeammates() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('.candidate-card');
+      
+      cards.forEach(card => {
+        const role = card.getAttribute('data-role');
+        const text = card.innerText.toLowerCase();
+
+        const matchesRole = (currentRoleFilter === 'all' || role === currentRoleFilter);
+        const matchesQuery = text.includes(q);
+
+        if (matchesRole && matchesQuery) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
+  <script src="js/app.js"></script>
+</body>
+</html>
