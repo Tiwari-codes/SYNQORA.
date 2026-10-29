@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Synqora — Command Dashboard</title>
+  <script src="js/config.js"></script>
   <link rel="stylesheet" href="css/style.css">
   <style>
     .sidebar-logo {
@@ -473,7 +474,8 @@
 
     async function loadDashboardData() {
       try {
-        const response = await fetch(`http://localhost:5000/api/user/${currentUserId}/profile`, {
+        const nodeApi = (typeof CONFIG !== 'undefined' && CONFIG.NODE_API_BASE) ? CONFIG.NODE_API_BASE : 'http://localhost:5000/api';
+        const response = await fetch(`${nodeApi}/user/${currentUserId}/profile`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -548,8 +550,10 @@
         const projEl = document.getElementById('activeProjectsCount');
         if (projEl) projEl.innerText = 2 + customProjs.length;
 
+        const nodeApi = (typeof CONFIG !== 'undefined' && CONFIG.NODE_API_BASE) ? CONFIG.NODE_API_BASE : 'http://localhost:5000/api';
+
         // 2. Load users count for Teammate Matches
-        const uRes = await fetch('http://localhost:5000/api/users', {
+        const uRes = await fetch(`${nodeApi}/users`, {
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
         const uData = await uRes.json();
@@ -559,7 +563,7 @@
         }
 
         // 3. Load incoming pending requests
-        const rRes = await fetch('http://localhost:5000/api/requests', {
+        const rRes = await fetch(`${nodeApi}/requests`, {
           headers: { 'Authorization': `Bearer ${authToken}` }
         });
         const rData = await rRes.json();
@@ -602,7 +606,8 @@
 
     async function handleDashRequest(reqId, status) {
       try {
-        const res = await fetch(`http://localhost:5000/api/requests/${reqId}/update`, {
+        const nodeApi = (typeof CONFIG !== 'undefined' && CONFIG.NODE_API_BASE) ? CONFIG.NODE_API_BASE : 'http://localhost:5000/api';
+        const res = await fetch(`${nodeApi}/requests/${reqId}/update`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synqora — SyncSpace</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -90,7 +91,7 @@
 
     <!-- Script Logic -->
     <script>
-        const API_BASE = 'http://localhost:5000';
+        const API_BASE = (typeof CONFIG !== 'undefined' && CONFIG.NODE_SERVER_URL) ? CONFIG.NODE_SERVER_URL : 'http://localhost:5000';
         const token = localStorage.getItem('synqora_token');
         let currentUserId = null;
         let activeReceiverId = null;

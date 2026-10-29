@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Synqora — Developer Profile & Passports</title>
+  <script src="js/config.js"></script>
   
   <!-- GLOBAL CSS -->
   <link rel="stylesheet" href="css/style.css">
@@ -490,7 +491,7 @@
 
   <!-- REAL-TIME BACKEND INTEGRATION SCRIPT -->
   <script>
-    const API_BASE = 'http://localhost:5000';
+    const API_BASE = (typeof CONFIG !== 'undefined' && CONFIG.NODE_SERVER_URL) ? CONFIG.NODE_SERVER_URL : 'http://localhost:5000';
     
     const urlParams = new URLSearchParams(window.location.search);
     const targetUserId = urlParams.get('user_id');

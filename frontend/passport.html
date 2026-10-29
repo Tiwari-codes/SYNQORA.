@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Synqora — Verified Skill Passport</title>
+  <script src="js/config.js"></script>
   
   <!-- GLOBAL CSS -->
   <link rel="stylesheet" href="css/style.css">
@@ -419,9 +420,10 @@
       const token = localStorage.getItem('synqora_token');
 
       try {
+        const nodeApi = (typeof CONFIG !== 'undefined' && CONFIG.NODE_API_BASE) ? CONFIG.NODE_API_BASE : 'http://localhost:5000/api';
         if (targetUserId) {
           // Fetch teammate's profile & verified passports from backend API
-          const response = await fetch(`http://localhost:5000/api/user/${targetUserId}/profile`, {
+          const response = await fetch(`${nodeApi}/user/${targetUserId}/profile`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           const result = await response.json();
@@ -449,7 +451,7 @@
           }
         } else {
           const fetchHash = hashKey || 'SYNQ-0x8F2A9C4E7B';
-          const response = await fetch(`http://localhost:5000/api/passport/${fetchHash}`);
+          const response = await fetch(`${nodeApi}/passport/${fetchHash}`);
           const result = await response.json();
 
           if (result.success) {

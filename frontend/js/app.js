@@ -4,7 +4,12 @@
    Passport Generator, Custom Skills, Page Routing & Admin Role.
    ============================================================ */
 
-const API_BASE_URL = "http://127.0.0.1:8000/api";
+const API_BASE_URL = (typeof CONFIG !== 'undefined' && CONFIG.FASTAPI_BASE) 
+  ? CONFIG.FASTAPI_BASE 
+  : "http://127.0.0.1:8000/api";
+const NODE_API_BASE = (typeof CONFIG !== 'undefined' && CONFIG.NODE_API_BASE)
+  ? CONFIG.NODE_API_BASE
+  : "http://localhost:5000/api";
 
 // GLOBAL STATE
 const urlParams = new URLSearchParams(window.location.search);
@@ -325,6 +330,40 @@ function startRound2() {
   fetchQuestionsFromBackend(currentSkill, 2);
 }
 
+async function submitAssessmentResults(score, skillName, totalQuestions, violationsCount = 0) {
+  const token = localStorage.getItem('synqora_token') || '';
+  const storedUser = JSON.parse(localStorage.getItem('synqora_user') || '{}');
+
+  try {
+    const response = await fetch(`${NODE_API_BASE}/assessment/submit`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        user_id: storedUser.id || 1,
+        skill_name: skillName,
+        score_percentage: score,
+        total: totalQuestions,
+        status: score >= 80 ? 'PASSED' : 'FAILED',
+        proctor_violations: violationsCount
+      })
+    });
+
+    const data = await response.json();
+    if (data.success && data.passport_url) {
+      alert("Assessment saved and Passport Certificate Generated!");
+      window.location.href = data.passport_url;
+    } else {
+      window.location.href = `passport.html?skill=${encodeURIComponent(skillName)}&score=${score}`;
+    }
+  } catch (err) {
+    console.error("Error submitting assessment:", err);
+    window.location.href = `passport.html?skill=${encodeURIComponent(skillName)}&score=${score}`;
+  }
+}
+
 function triggerGrandCelebration() {
   var duration = 4.5 * 1000;
   var animationEnd = Date.now() + duration;
@@ -339,7 +378,7 @@ function triggerGrandCelebration() {
   }, 300);
 
   setTimeout(() => {
-    window.location.href = `passport.html?skill=${encodeURIComponent(currentSkill)}&score=90%25`;
+    submitAssessmentResults(90, currentSkill, 10, warningCount);
   }, 4500);
 }
 

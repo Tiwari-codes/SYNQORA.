@@ -14,6 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Orbitron:wght@800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="js/config.js"></script>
 
   <style>
     body {
@@ -528,7 +529,8 @@
       document.getElementById('optionsContainer').innerHTML = `<div style="color: #00F0FF; padding: 1rem 0;">Fetching live AI questions from FastAPI Engine...</div>`;
       
       try {
-        let response = await fetch(`http://127.0.0.1:8000/api/questions?skill=${encodeURIComponent(skill)}&round=${round}&user_id=1&t=${Date.now()}`).catch(() => null);
+        const fastApiBase = (typeof CONFIG !== 'undefined' && CONFIG.FASTAPI_BASE) ? CONFIG.FASTAPI_BASE : "http://127.0.0.1:8000/api";
+        let response = await fetch(`${fastApiBase}/questions?skill=${encodeURIComponent(skill)}&round=${round}&user_id=1&t=${Date.now()}`).catch(() => null);
         
         if (response && response.ok) {
           activeQuestions = await response.json();
@@ -831,7 +833,8 @@
       try {
         const token = localStorage.getItem('synqora_token') || '';
         const storedUser = JSON.parse(localStorage.getItem('synqora_user') || '{}');
-        const response = await fetch('http://localhost:5000/api/assessment/submit', {
+        const nodeApiBase = (typeof CONFIG !== 'undefined' && CONFIG.NODE_API_BASE) ? CONFIG.NODE_API_BASE : "http://localhost:5000/api";
+        const response = await fetch(`${nodeApiBase}/assessment/submit`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

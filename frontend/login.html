@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Synqora — Welcome Back</title>
+  <script src="js/config.js"></script>
 
   <link rel="stylesheet" href="css/style.css">
 
@@ -470,7 +471,7 @@
   </div>
 
   <script>
-    const SYNQORA_API_URL = 'http://localhost:5000/api';
+    const SYNQORA_API_URL = (typeof CONFIG !== 'undefined' && CONFIG.NODE_API_BASE) ? CONFIG.NODE_API_BASE : 'http://localhost:5000/api';
 
     function openGoogleModal() {
       document.getElementById('googleAuthModal').style.display = 'flex';
