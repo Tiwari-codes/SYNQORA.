@@ -1,0 +1,48 @@
+# ========================================================
+# SYNQORA PROTOCOL - ROOT GITIGNORE
+# ========================================================
+
+# Dependencies
+node_modules/
+*/node_modules/
+package-lock.json.bak
+
+# Python Bytecode & Cache
+__pycache__/
+*/__pycache__/
+backend/__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Environment Variables & Secrets
+.env
+backend/.env
+*.env
+*.env.local
+*.env.production
+
+# Local Databases & Runtime Storage
+*.sqlite
+*.sqlite3
+synqora.db
+backend/synqora.db
+
+# Logs & Temporary Files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Operating System & IDE Configs
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace

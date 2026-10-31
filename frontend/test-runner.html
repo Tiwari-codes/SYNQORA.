@@ -327,6 +327,7 @@
 <body oncontextmenu="return false;">
 
   <!-- QUIZ WRAPPER CONTAINER -->
+  <div id="quiz-screen">
   <div id="quizWrapperContainer">
     <header class="test-header-bar">
       <div>
@@ -413,11 +414,11 @@
   <div class="modal-overlay-custom" id="selectionWarningModal">
     <div class="modal-content-box" style="border-color: #FFB800;">
       <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚠️</div>
-      <h2 style="color: #FFB800; font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem;">Answer Selection Required!</h2>
-      <p style="color: #A0AEC0; font-size: 0.85rem; margin-bottom: 1.25rem; line-height: 1.5;">
+      <h2 style="color: #FFB800; font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem;">Answer Required!</h2>
+      <p id="selectionModalDesc" style="color: #A0AEC0; font-size: 0.85rem; margin-bottom: 1.25rem; line-height: 1.5;">
         You cannot proceed without picking an option or entering an answer for this question.
       </p>
-      <button onclick="closeSelectionModal()" class="btn-next-action" style="width: 100%;">Got it, let me select</button>
+      <button onclick="closeSelectionModal()" class="btn-next-action" style="width: 100%;">Got it, let me answer</button>
     </div>
   </div>
 
@@ -507,13 +508,14 @@
       }, 1000);
     }
 
-    function sanitizeAnswer(str) {
-      if (!str) return '';
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
       return String(str)
-        .replace(/\\n/g, '')
-        .replace(/[.,/#!$%^&*;:{}=\-_`~()'"]/g, '')
-        .trim()
-        .toLowerCase();
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
     function jumpToQuestion(num) {
@@ -524,33 +526,161 @@
       }
     }
 
+    function getLocalFallbackSuite(skill) {
+      return [
+        {
+          id: 1,
+          type: "Standard MCQ",
+          company_tag: "Amazon | 2026",
+          question: `Which core data structure in ${skill} provides O(1) average time complexity for key-based lookups?`,
+          options: ["A) Hash Table / Dictionary", "B) Linear Unsorted Array", "C) Singly Linked List", "D) FIFO Queue"],
+          correct_answer: "A"
+        },
+        {
+          id: 2,
+          type: "True / False",
+          company_tag: "Google | 2026",
+          question: `True or False: In ${skill}, immutable primitive objects allow in-place memory mutation after initial creation.`,
+          options: ["A) TRUE", "B) FALSE"],
+          correct_answer: "B"
+        },
+        {
+          id: 3,
+          type: "Spot the Bug",
+          company_tag: "Microsoft | 2026",
+          question: `Identify the error when accessing the 4th element in a 0-indexed collection of size 3 in ${skill}:\n\nitems = [10, 20, 30]\nval = items[3]`,
+          options: ["A) IndexError: list index out of range", "B) SyntaxError on line 1", "C) Memory Leak Warning", "D) StackOverflowError"],
+          correct_answer: "A"
+        },
+        {
+          id: 4,
+          type: "Complete the Statement",
+          company_tag: "Atlassian | 2026",
+          question: `To prevent race conditions during concurrent access to shared state in ${skill}, developers use a ____ lock.`,
+          options: ["A) Mutex / Semaphore", "B) Virtual Memory", "C) Garbage Collection", "D) Buffer Overflow"],
+          correct_answer: "A"
+        },
+        {
+          id: 5,
+          type: "Manual Fill-In",
+          company_tag: "Uber | 2026",
+          question: `What is the average time complexity (in Big-O notation, e.g. O(1) or O(n)) for hash-indexed lookup in ${skill}?`,
+          options: [],
+          correct_answer: "O(1)"
+        },
+        {
+          id: 6,
+          type: "Standard MCQ",
+          company_tag: "Flipkart | 2025",
+          question: `What is the worst-case time complexity of Binary Search on a sorted array of N elements in ${skill}?`,
+          options: ["A) O(log N)", "B) O(N)", "C) O(N log N)", "D) O(1)"],
+          correct_answer: "A"
+        },
+        {
+          id: 7,
+          type: "True / False",
+          company_tag: "Stripe | 2026",
+          question: `True or False: A recursive function without a valid termination base case will trigger a Stack Overflow in ${skill}.`,
+          options: ["A) TRUE", "B) FALSE"],
+          correct_answer: "A"
+        },
+        {
+          id: 8,
+          type: "Spot the Bug",
+          company_tag: "Zomato | 2025",
+          question: `What is the logical issue in the following loop condition?\n\ncount = 10\nwhile count > 0:\n    count += 1`,
+          options: ["A) Infinite loop because count increases instead of decreasing", "B) SyntaxError in while loop header", "C) Variable count is undefined", "D) Loop terminates immediately"],
+          correct_answer: "A"
+        },
+        {
+          id: 9,
+          type: "Complete the Statement",
+          company_tag: "Razorpay | 2026",
+          question: `The software design principle stating that a class or module should have only one reason to change is the ____ Principle.`,
+          options: ["A) Single Responsibility (SRP)", "B) Open Closed (OCP)", "C) Liskov Substitution (LSP)", "D) Interface Segregation (ISP)"],
+          correct_answer: "A"
+        },
+        {
+          id: 10,
+          type: "Manual Fill-In",
+          company_tag: "TCS Digital | 2026",
+          question: `Which HTTP status code number represents 'OK / Success' in REST APIs built with ${skill}?`,
+          options: [],
+          correct_answer: "200"
+        }
+      ];
+    }
+
     async function fetchQuestionsFromBackend(skill, round) {
       document.getElementById('questionContentBox').innerHTML = `<h2 style="font-size: 1.2rem; color: #FFF;">Generating Fresh AI Questions... 🤖</h2>`;
-      document.getElementById('optionsContainer').innerHTML = `<div style="color: #00F0FF; padding: 1rem 0;">Fetching live AI questions from FastAPI Engine...</div>`;
+      document.getElementById('optionsContainer').innerHTML = `<div style="color: #00F0FF; padding: 1rem 0;">Fetching live AI questions from Assessment Engine...</div>`;
       
       try {
         const fastApiBase = (typeof CONFIG !== 'undefined' && CONFIG.FASTAPI_BASE) ? CONFIG.FASTAPI_BASE : "http://127.0.0.1:8000/api";
         let response = await fetch(`${fastApiBase}/questions?skill=${encodeURIComponent(skill)}&round=${round}&user_id=1&t=${Date.now()}`).catch(() => null);
         
         if (response && response.ok) {
-          activeQuestions = await response.json();
-          renderCurrentQuestion();
-        } else {
-          renderFallbackQuestion();
+          const list = await response.json();
+          if (Array.isArray(list) && list.length >= 3) {
+            activeQuestions = list;
+            renderCurrentQuestion();
+            return;
+          }
         }
+
+        // Secondary fallback to Node Backend
+        const nodeApiBase = (typeof CONFIG !== 'undefined' && CONFIG.NODE_API_BASE) ? CONFIG.NODE_API_BASE : "http://localhost:5000/api";
+        let nodeResponse = await fetch(`${nodeApiBase}/questions?skill=${encodeURIComponent(skill)}&round=${round}`).catch(() => null);
+        if (nodeResponse && nodeResponse.ok) {
+          const list = await nodeResponse.json();
+          if (Array.isArray(list) && list.length >= 3) {
+            activeQuestions = list;
+            renderCurrentQuestion();
+            return;
+          }
+        }
+
+        // Reliable complete offline fallback suite
+        activeQuestions = getLocalFallbackSuite(skill);
+        renderCurrentQuestion();
       } catch (err) {
-        renderFallbackQuestion();
+        console.warn("Using offline fallback suite:", err);
+        activeQuestions = getLocalFallbackSuite(skill);
+        renderCurrentQuestion();
       }
     }
 
-    function selectOptionCard(element, userVal, optionKey) {
-      document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
-      element.classList.add('selected');
+    function selectOptionByKey(optKey) {
+      const key = String(optKey || 'A').trim().toUpperCase().charAt(0);
+      userAnswersMap[questionIndex] = key;
 
-      const radio = element.querySelector('input[type="radio"]');
-      if (radio) radio.checked = true;
+      const items = document.querySelectorAll('.option-item');
+      items.forEach(el => {
+        if (el.getAttribute('data-key') === key) {
+          el.classList.add('selected');
+          const radio = el.querySelector('input[type="radio"]');
+          if (radio) radio.checked = true;
+        } else {
+          el.classList.remove('selected');
+          const radio = el.querySelector('input[type="radio"]');
+          if (radio) radio.checked = false;
+        }
+      });
+      updatePaletteUI();
+    }
 
-      userAnswersMap[questionIndex] = optionKey || userVal;
+    function handleManualInput(val) {
+      const clean = String(val || '').trim();
+      userAnswersMap[questionIndex] = clean;
+      const statusEl = document.getElementById('manualInputStatus');
+      if (statusEl) {
+        if (clean) {
+          statusEl.innerHTML = `<span style="color: #00FF87;">✓ Recorded: "${escapeHtml(clean)}"</span>`;
+        } else {
+          statusEl.innerHTML = `<span style="color: #A0AEC0;">Type answer and click Next Question (or press Enter)</span>`;
+        }
+      }
+      updatePaletteUI();
     }
 
     function formatQuestionWithCode(rawText) {
@@ -564,10 +694,10 @@
 
         return `
           <h2 style="font-size: 1.15rem; color: #FFF; font-weight: 700; line-height: 1.5; margin-bottom: 0.75rem;">
-            Q${questionIndex}. ${headerText.trim()}
+            Q${questionIndex}. ${escapeHtml(headerText.trim())}
           </h2>
-          <div class="code-snippet-box">${codeContent.trim()}</div>
-          ${footerText.trim() ? `<p style="color: #A0AEC0; font-size: 0.95rem; margin-bottom: 1.25rem;">${footerText.trim()}</p>` : ''}
+          <div class="code-snippet-box">${escapeHtml(codeContent.trim())}</div>
+          ${footerText.trim() ? `<p style="color: #A0AEC0; font-size: 0.95rem; margin-bottom: 1.25rem;">${escapeHtml(footerText.trim())}</p>` : ''}
         `;
       } 
       else if (cleanText.includes('\n')) {
@@ -578,16 +708,16 @@
         if (codeLines.length > 0) {
           return `
             <h2 style="font-size: 1.15rem; color: #FFF; font-weight: 700; line-height: 1.5; margin-bottom: 0.75rem;">
-              Q${questionIndex}. ${titleLine}
+              Q${questionIndex}. ${escapeHtml(titleLine)}
             </h2>
-            <div class="code-snippet-box">${codeLines}</div>
+            <div class="code-snippet-box">${escapeHtml(codeLines)}</div>
           `;
         }
       }
 
       return `
         <h2 style="font-size: 1.15rem; color: #FFF; font-weight: 700; line-height: 1.5; margin-bottom: 1.75rem;">
-          Q${questionIndex}. ${cleanText}
+          Q${questionIndex}. ${escapeHtml(cleanText)}
         </h2>
       `;
     }
@@ -599,7 +729,7 @@
 
         if (i === questionIndex) {
           item.className = 'palette-item active';
-        } else if (userAnswersMap[i]) {
+        } else if (userAnswersMap[i] && String(userAnswersMap[i]).trim() !== '') {
           item.className = 'palette-item answered';
         } else {
           item.className = 'palette-item';
@@ -621,11 +751,11 @@
       updatePaletteUI();
 
       if (!activeQuestions || activeQuestions.length === 0) {
-        renderFallbackQuestion();
-        return;
+        activeQuestions = getLocalFallbackSuite(selectedSkill);
       }
       
       const q = activeQuestions[questionIndex - 1] || activeQuestions[0];
+      const qType = String(q.type || 'Standard MCQ').trim();
       
       const realisticTags = [
         "Likely asked in product startups",
@@ -636,93 +766,178 @@
       ];
       const randomTag = realisticTags[(questionIndex + currentRound) % realisticTags.length];
 
-      document.getElementById('companyTag').innerText = `🏢 ${randomTag}`;
-      document.getElementById('typeTag').innerText = `🏷️ Type: ${q.type || 'Standard MCQ'}`;
+      document.getElementById('companyTag').innerText = `🏢 ${q.company_tag || randomTag}`;
+
+      // Stylized Type Tag
+      const typeTagEl = document.getElementById('typeTag');
+      if (typeTagEl) {
+        if (qType === 'Manual Fill-In') {
+          typeTagEl.innerHTML = `⌨️ Type: Manual Fill-In`;
+          typeTagEl.style.color = '#00F0FF';
+          typeTagEl.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+          typeTagEl.style.background = 'rgba(0, 240, 255, 0.12)';
+        } else if (qType === 'True / False') {
+          typeTagEl.innerHTML = `⚖️ Type: True / False`;
+          typeTagEl.style.color = '#A78BFA';
+          typeTagEl.style.borderColor = 'rgba(167, 139, 250, 0.4)';
+          typeTagEl.style.background = 'rgba(167, 139, 250, 0.12)';
+        } else if (qType === 'Spot the Bug') {
+          typeTagEl.innerHTML = `🐛 Type: Spot the Bug / Error Finder`;
+          typeTagEl.style.color = '#FB923C';
+          typeTagEl.style.borderColor = 'rgba(251, 146, 60, 0.4)';
+          typeTagEl.style.background = 'rgba(251, 146, 60, 0.12)';
+        } else if (qType === 'Complete the Statement') {
+          typeTagEl.innerHTML = `🧩 Type: Complete the Statement`;
+          typeTagEl.style.color = '#38BDF8';
+          typeTagEl.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+          typeTagEl.style.background = 'rgba(56, 189, 248, 0.12)';
+        } else {
+          typeTagEl.innerHTML = `📋 Type: Standard MCQ`;
+          typeTagEl.style.color = '#FFB800';
+          typeTagEl.style.borderColor = 'rgba(255, 184, 0, 0.3)';
+          typeTagEl.style.background = 'rgba(255, 184, 0, 0.12)';
+        }
+      }
 
       document.getElementById('questionContentBox').innerHTML = formatQuestionWithCode(q.question);
 
       const optionsContainer = document.getElementById('optionsContainer');
       const savedAns = userAnswersMap[questionIndex];
       
+      // CASE 1: MANUAL FILL-IN (Output Prediction / Big-O / Exact Value)
+      if (qType === 'Manual Fill-In') {
+        const currentVal = savedAns || '';
+        optionsContainer.innerHTML = `
+          <div style="background: #090D16; border: 1px solid #24324D; border-radius: 14px; padding: 1.5rem; margin-top: 0.5rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; color: #00F0FF; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.75rem;">
+              <span>⌨️</span> <span>Enter your predicted output or answer:</span>
+            </label>
+            <input 
+              type="text" 
+              id="manualAnswerInput" 
+              class="manual-input-field" 
+              placeholder="e.g. O(1), 200, True, None, or return value" 
+              value="${escapeHtml(currentVal)}"
+              oninput="handleManualInput(this.value)"
+              onkeydown="if(event.key === 'Enter') handleNextQuestion()"
+              autocomplete="off"
+              spellcheck="false"
+              style="margin-bottom: 0.75rem;"
+            />
+            <div id="manualInputStatus" style="font-size: 0.82rem; font-family: 'JetBrains Mono', monospace;">
+              ${currentVal ? `<span style="color: #00FF87;">✓ Recorded: "${escapeHtml(currentVal)}"</span>` : `<span style="color: #A0AEC0;">Type your answer and click Next Question (or press Enter)</span>`}
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          const input = document.getElementById('manualAnswerInput');
+          if (input) input.focus();
+        }, 100);
+        return;
+      }
+
+      // Clean and sanitize options for multiple-choice style questions
       let cleanOptions = (q.options || []).filter(opt => {
         const clean = String(opt).replace(/\\n/g, ' ').trim();
-        return clean !== 'correct_answer' && clean !== ':' && clean !== 'A' && clean !== 'B' && clean !== 'C' && clean !== 'D';
+        return clean.length > 0 && clean.toLowerCase() !== 'correct_answer';
       });
 
-      if (q.type === 'True / False' || q.type === 'True/False') {
+      // CASE 2: TRUE / FALSE
+      const isTrueFalse = qType === 'True / False' || (cleanOptions.length === 2 && cleanOptions.some(o => /true|false/i.test(o)));
+      if (isTrueFalse) {
+        const isA = savedAns === 'A';
+        const isB = savedAns === 'B';
         optionsContainer.innerHTML = `
-          <div class="option-item ${savedAns === 'A' ? 'selected' : ''}" onclick="selectOptionCard(this, 'TRUE', 'A')">
-            <input type="radio" name="tf" id="tf1" value="A" ${savedAns === 'A' ? 'checked' : ''}>
-            <label for="tf1" style="color:#FFF; cursor:pointer;">A) TRUE</label>
+          <div class="option-item ${isA ? 'selected' : ''}" data-key="A" onclick="selectOptionByKey('A')" style="border-left: 4px solid #00FF87;">
+            <input type="radio" name="mcq_option" id="tf1" value="A" ${isA ? 'checked' : ''} style="pointer-events: none;">
+            <label style="color:#FFF; cursor:pointer; pointer-events: none; width: 100%; font-weight: 700;">A) TRUE</label>
           </div>
-          <div class="option-item ${savedAns === 'B' ? 'selected' : ''}" onclick="selectOptionCard(this, 'FALSE', 'B')">
-            <input type="radio" name="tf" id="tf2" value="B" ${savedAns === 'B' ? 'checked' : ''}>
-            <label for="tf2" style="color:#FFF; cursor:pointer;">B) FALSE</label>
+          <div class="option-item ${isB ? 'selected' : ''}" data-key="B" onclick="selectOptionByKey('B')" style="border-left: 4px solid #FF3366;">
+            <input type="radio" name="mcq_option" id="tf2" value="B" ${isB ? 'checked' : ''} style="pointer-events: none;">
+            <label style="color:#FFF; cursor:pointer; pointer-events: none; width: 100%; font-weight: 700;">B) FALSE</label>
           </div>
         `;
-      } else if (q.type === 'Manual Fill-In' || cleanOptions.length === 0) {
-        optionsContainer.innerHTML = `
-          <label style="color: #A0AEC0; font-size: 0.85rem; font-weight: 700;">Type your answer:</label>
-          <input type="text" class="manual-input-field" placeholder="e.g. O(1)" id="manualFillAns" value="${savedAns || ''}" oninput="userAnswersMap[questionIndex] = this.value;">
-        `;
-      } else {
-        optionsContainer.innerHTML = cleanOptions.map((opt, idx) => {
-          const optKey = String(opt).trim().charAt(0);
-          const isSelected = savedAns === optKey || savedAns === String(opt);
-          return `
-            <div class="option-item ${isSelected ? 'selected' : ''}" onclick="selectOptionCard(this, '${String(opt).replace(/'/g, "\\'")}', '${optKey}')">
-              <input type="radio" name="mcq" id="opt${idx}" value="${optKey}" ${isSelected ? 'checked' : ''}>
-              <label for="opt${idx}" style="color:#FFF; cursor:pointer;">${opt}</label>
-            </div>
-          `;
-        }).join('');
+        return;
       }
+
+      // CASE 3, 4, 5: SPOT THE BUG, COMPLETE THE STATEMENT, STANDARD MCQ
+      if (cleanOptions.length < 2) {
+        cleanOptions = [
+          `A) Optimal ${selectedSkill} Pattern`,
+          `B) Linear scan sub-optimal approach`,
+          `C) SyntaxError / Invalid Reference`,
+          `D) Memory limit exceeded`
+        ];
+      }
+
+      const letters = ['A', 'B', 'C', 'D'];
+      optionsContainer.innerHTML = cleanOptions.slice(0, 4).map((opt, idx) => {
+        const optStr = String(opt).trim();
+        const match = optStr.match(/^[A-D]/i);
+        const optKey = match ? match[0].toUpperCase() : (letters[idx] || 'A');
+        const isSelected = savedAns === optKey;
+
+        let borderStyle = '';
+        if (qType === 'Spot the Bug') {
+          borderStyle = 'border-left: 4px solid #FB923C;';
+        } else if (qType === 'Complete the Statement') {
+          borderStyle = 'border-left: 4px solid #38BDF8;';
+        }
+
+        return `
+          <div class="option-item ${isSelected ? 'selected' : ''}" data-key="${optKey}" onclick="selectOptionByKey('${optKey}')" style="${borderStyle}">
+            <input type="radio" name="mcq_option" id="opt_${idx}" value="${optKey}" ${isSelected ? 'checked' : ''} style="pointer-events: none;">
+            <label style="color:#FFF; cursor:pointer; pointer-events: none; width: 100%; font-weight: 600;">${escapeHtml(optStr)}</label>
+          </div>
+        `;
+      }).join('');
     }
 
     function renderFallbackQuestion() {
-      updatePaletteUI();
-      const optionsContainer = document.getElementById('optionsContainer');
-      const savedAns = userAnswersMap[questionIndex];
-
-      document.getElementById('companyTag').innerText = '🏢 Common interview pattern';
-      document.getElementById('typeTag').innerText = '🏷️ Type: Standard MCQ';
-
-      if (questionIndex === 1) {
-        document.getElementById('questionContentBox').innerHTML = formatQuestionWithCode(`Which data structure in ${selectedSkill} operates on key-value pairs with O(1) average lookup complexity?`);
-        
-        optionsContainer.innerHTML = `
-          <div class="option-item ${savedAns === 'A' ? 'selected' : ''}" onclick="selectOptionCard(this, 'List', 'A')"><input type="radio" name="mcq" id="o1" ${savedAns === 'A' ? 'checked' : ''}><label for="o1" style="color:#FFF;">A) List / Array</label></div>
-          <div class="option-item ${savedAns === 'B' ? 'selected' : ''}" onclick="selectOptionCard(this, 'Hash Table', 'B')"><input type="radio" name="mcq" id="o2" ${savedAns === 'B' ? 'checked' : ''}><label for="o2" style="color:#FFF;">B) Hash Table / Dictionary</label></div>
-          <div class="option-item ${savedAns === 'C' ? 'selected' : ''}" onclick="selectOptionCard(this, 'Queue', 'C')"><input type="radio" name="mcq" id="o3" ${savedAns === 'C' ? 'checked' : ''}><label for="o3" style="color:#FFF;">C) Queue</label></div>
-        `;
-      } else {
-        document.getElementById('questionContentBox').innerHTML = formatQuestionWithCode(`What is the average time complexity for primary index access in ${selectedSkill}?`);
-        optionsContainer.innerHTML = `
-          <label style="color: #A0AEC0; font-size: 0.85rem; font-weight: 700;">Type your exact answer here:</label>
-          <input type="text" class="manual-input-field" placeholder="e.g. O(1)" id="manualFillAns" value="${savedAns || ''}" oninput="userAnswersMap[questionIndex] = this.value;">
-        `;
-      }
+      activeQuestions = getLocalFallbackSuite(selectedSkill);
+      renderCurrentQuestion();
     }
 
     function calculateTotalScore() {
       let correctAnswersCount = 0;
       for (let i = 1; i <= 10; i++) {
         const q = activeQuestions[i - 1];
-        const rawCorrect = q ? (q.correct_answer || 'B') : 'B';
-        const rawUser = userAnswersMap[i] || '';
+        if (!q) continue;
 
-        const cleanCorrect = sanitizeAnswer(rawCorrect);
-        const cleanUser = sanitizeAnswer(rawUser);
+        const userAns = String(userAnswersMap[i] || '').trim();
+        const correctAns = String(q.correct_answer || 'A').trim();
 
-        if (cleanUser && (cleanUser === cleanCorrect || cleanUser.includes(cleanCorrect) || cleanCorrect.includes(cleanUser))) {
-          correctAnswersCount++;
+        if (q.type === 'Manual Fill-In') {
+          // Robust comparison: lowercase, strip quotes, spaces, punctuation
+          const sanitize = (s) => String(s).toLowerCase().replace(/['"`;\s]/g, '');
+          const cleanUser = sanitize(userAns);
+          const cleanCorrect = sanitize(correctAns);
+          if (cleanUser && (cleanUser === cleanCorrect || cleanCorrect.includes(cleanUser) || cleanUser.includes(cleanCorrect))) {
+            correctAnswersCount++;
+          }
+        } else {
+          const correctLetter = correctAns.toUpperCase().charAt(0);
+          const userLetter = userAns.toUpperCase().charAt(0);
+          if (userLetter && userLetter === correctLetter) {
+            correctAnswersCount++;
+          }
         }
       }
       return correctAnswersCount;
     }
 
     function handleNextQuestion() {
-      if (!userAnswersMap[questionIndex] || userAnswersMap[questionIndex].trim() === '') {
+      const currentAnswer = userAnswersMap[questionIndex];
+      if (!currentAnswer || String(currentAnswer).trim() === '') {
+        const q = activeQuestions[questionIndex - 1];
+        const warnDesc = document.getElementById('selectionModalDesc');
+        if (warnDesc) {
+          if (q && q.type === 'Manual Fill-In') {
+            warnDesc.innerText = "Please type your predicted output or answer in the field before proceeding.";
+          } else {
+            warnDesc.innerText = "Please select one of the answer option cards before proceeding.";
+          }
+        }
         document.getElementById('selectionWarningModal').style.display = 'flex';
         return;
       }
@@ -863,25 +1078,52 @@
     const warningModal = document.getElementById('warningModal');
     const warningCountText = document.getElementById('warningCountText');
 
-    window.addEventListener('blur', () => {
+    function recordCheatAttempt(reason) {
       warningCount++;
       if (warningCountText) warningCountText.innerText = warningCount;
-      if (warningModal) warningModal.style.display = 'flex';
-
+      if (warningModal) {
+        const desc = warningModal.querySelector('p');
+        if (desc) {
+          desc.innerHTML = `<span style="color:#FF3366; font-weight:bold;">Violation Detected:</span> ${reason}.<br>Unauthorized actions are recorded and will invalidate your Skill Passport.`;
+        }
+        warningModal.style.display = 'flex';
+      }
       if (warningCount >= 3) {
-        alert('❌ Test Terminated! Multiple tab switches detected. Score: 0');
+        alert('❌ Test Terminated! Multiple security violations or devtools inspection detected. Score: 0');
         window.location.href = 'skills.html';
       }
+    }
+
+    window.addEventListener('blur', () => {
+      recordCheatAttempt("Tab switch or focus lost");
     });
 
     function resumeTest() {
       if (warningModal) warningModal.style.display = 'none';
     }
 
+    // Change 6: Anti-Cheating Protocol Hardening
     document.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'u' || e.key === 'i')) {
+      if (
+        e.key === 'F12' || 
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || 
+        (e.ctrlKey && e.key === 'u')
+      ) {
         e.preventDefault();
-        alert('Copying & DevShortcuts are disabled during Synqora Proctoring!');
+        if (typeof recordCheatAttempt === 'function') {
+          recordCheatAttempt("DevTools / Source inspection attempt detected");
+        }
+      } else if (e.ctrlKey && (e.key === 'c' || e.key === 'v')) {
+        e.preventDefault();
+        if (typeof recordCheatAttempt === 'function') {
+          recordCheatAttempt("Copy / Paste shortcut disabled");
+        }
+      }
+    });
+
+    document.addEventListener('contextmenu', (e) => {
+      if (document.getElementById('quiz-screen') || document.getElementById('quizWrapperContainer')) {
+        e.preventDefault();
       }
     });
 
@@ -889,6 +1131,6 @@
     resetAndStartTimer();
     fetchQuestionsFromBackend(selectedSkill, 1);
   </script>
-
+  </div> <!-- end #quiz-screen -->
 </body>
 </html>

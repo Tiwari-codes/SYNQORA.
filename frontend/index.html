@@ -122,10 +122,31 @@
 
     /* Hero Section */
     .hero-section {
-      padding: 210px 2rem 70px;
-      text-align: center;
-      max-width: 1100px;
+      padding: 160px 2rem 50px;
+      max-width: 1280px;
       margin: 0 auto;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.95fr;
+      gap: 3.5rem;
+      align-items: center;
+      margin-bottom: 4rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 2.5rem;
+      }
+      .landing-nav {
+        padding: 0 1.5rem;
+      }
+      .hero-cta-group {
+        justify-content: center;
+      }
     }
 
     .hero-pill {
@@ -140,15 +161,15 @@
       font-size: 0.85rem;
       font-weight: 800;
       letter-spacing: 1.5px;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
     }
 
     .hero-title {
-      font-size: 4rem;
+      font-size: 3.6rem;
       font-weight: 800;
       line-height: 1.15;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.3rem;
       color: #FFFFFF;
       letter-spacing: -1px;
     }
@@ -161,19 +182,318 @@
     }
 
     .hero-subtitle {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       color: #A0AEC0;
-      max-width: 780px;
-      margin: 0 auto 2.8rem;
+      margin-bottom: 2rem;
       line-height: 1.65;
     }
 
     .hero-cta-group {
       display: flex;
       align-items: center;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    /* Change 9: Verified Skill Passport Badge Graphic */
+    .passport-badge-graphic {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(19, 27, 46, 0.85);
+      border: 1px solid rgba(0, 255, 135, 0.35);
+      box-shadow: 0 8px 24px rgba(0, 255, 135, 0.12);
+      border-radius: 14px;
+      padding: 0.85rem 1.25rem;
+      max-width: 520px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .passport-badge-graphic:hover {
+      border-color: #00FF87;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 255, 135, 0.25);
+    }
+
+    .passport-badge-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: rgba(0, 255, 135, 0.12);
+      border: 1px solid rgba(0, 255, 135, 0.4);
+      display: flex;
+      align-items: center;
       justify-content: center;
-      gap: 1.5rem;
-      margin-bottom: 4rem;
+      flex-shrink: 0;
+    }
+
+    .passport-badge-text {
+      flex: 1;
+      text-align: left;
+    }
+
+    .passport-badge-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #00FF87;
+      letter-spacing: 1px;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.2rem;
+    }
+
+    .passport-badge-hash {
+      font-size: 0.82rem;
+      color: #94A3B8;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .passport-badge-chip {
+      background: #00FF87;
+      color: #090D16;
+      font-size: 0.7rem;
+      font-weight: 900;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      letter-spacing: 1px;
+    }
+
+    /* Change 9: Hero Right-Side Glassmorphic Mockup */
+    .hero-mockup-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .hero-mockup-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(0, 240, 255, 0.15) 50%, transparent 70%);
+      filter: blur(40px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .hero-mockup-card {
+      position: relative;
+      z-index: 1;
+      background: rgba(19, 27, 46, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 240, 255, 0.15);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .hero-mockup-card:hover {
+      border-color: #00F0FF;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 240, 255, 0.3);
+    }
+
+    .mockup-header {
+      background: rgba(9, 13, 22, 0.95);
+      border-bottom: 1px solid #24324D;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mockup-dots {
+      display: flex;
+      gap: 0.45rem;
+    }
+
+    .mockup-dots .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .dot.red { background: #FF5F56; }
+    .dot.yellow { background: #FFBD2E; }
+    .dot.green { background: #27C93F; }
+
+    .mockup-live-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #00F0FF;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .live-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00FF87;
+      box-shadow: 0 0 10px #00FF87;
+      animation: pulse-beacon 1.6s infinite ease-in-out;
+    }
+
+    @keyframes pulse-beacon {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.6; }
+    }
+
+    .mockup-body {
+      padding: 1.5rem;
+    }
+
+    .mockup-round-badge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: 10px;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #C7D2FE;
+      margin-bottom: 1.1rem;
+    }
+
+    .timer-pill {
+      background: #090D16;
+      border: 1px solid #FF3366;
+      color: #FF3366;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .mockup-code-block {
+      background: #090D16;
+      border: 1px solid #24324D;
+      border-left: 3px solid #00F0FF;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      text-align: left;
+    }
+
+    .mockup-code-header {
+      display: flex;
+      justify-content: space-between;
+      color: #94A3B8;
+      font-size: 0.74rem;
+      margin-bottom: 0.6rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 0.4rem;
+    }
+
+    .tag-meta {
+      color: #00F0FF;
+      font-weight: 700;
+    }
+
+    .mockup-code-block pre {
+      margin: 0;
+      overflow-x: auto;
+    }
+
+    .c-k { color: #F43F5E; font-weight: 700; }
+    .c-f { color: #38BDF8; }
+    .c-c { color: #64748B; font-style: italic; }
+
+    .mockup-options-preview {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .mockup-opt {
+      background: #0E1626;
+      border: 1px solid #24324D;
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
+      font-size: 0.82rem;
+      color: #E2E8F0;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mockup-opt.active-opt {
+      border-color: #6366F1 !important;
+      background: rgba(99, 102, 241, 0.15) !important;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.3) !important;
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+
+    .check-mark {
+      color: #00FF87;
+      font-weight: 900;
+    }
+
+    .mockup-footer-score {
+      background: #0E1626;
+      border: 1px solid #24324D;
+      border-radius: 12px;
+      padding: 0.9rem;
+    }
+
+    .score-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #A0AEC0;
+      margin-bottom: 0.45rem;
+    }
+
+    .score-pct {
+      color: #00FF87;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+    }
+
+    .score-bar-bg {
+      height: 8px;
+      background: #182238;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-bottom: 0.75rem;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6366F1, #00F0FF, #00FF87);
+      border-radius: 9999px;
+      transition: width 0.6s ease;
+    }
+
+    .score-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tag-sub {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #24324D;
+      color: #94A3B8;
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
     }
 
     /* Live Protocol Metrics Banner */
@@ -185,7 +505,6 @@
       border: 1px solid #24324D;
       border-radius: 18px;
       padding: 2rem;
-      margin-bottom: 4rem;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
@@ -227,7 +546,7 @@
     }
 
     .section-subtitle {
-      color: #A0AEC0;
+      color: #94A3B8;
       font-size: 1.1rem;
     }
 
@@ -255,25 +574,38 @@
       box-shadow: 0 15px 35px rgba(0, 240, 255, 0.2);
     }
 
-    .feature-icon {
-      width: 52px;
-      height: 52px;
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px solid #00F0FF;
-      border-radius: 12px;
+    /* Change 9: Crisp Neon Glowing Feature Icons */
+    .feature-icon-wrapper {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 1.5rem;
-      color: #00F0FF;
+      transition: all 0.3s ease;
     }
 
-    .feature-icon svg {
-      width: 26px;
-      height: 26px;
-      stroke: #00F0FF;
-      fill: none;
-      stroke-width: 2.2;
+    .feature-icon-engine {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid #00F0FF;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    .feature-icon-shield {
+      background: rgba(255, 51, 102, 0.1);
+      border: 1px solid #FF3366;
+      box-shadow: 0 0 20px rgba(255, 51, 102, 0.3);
+    }
+
+    .feature-icon-matchmaking {
+      background: rgba(0, 255, 135, 0.1);
+      border: 1px solid #00FF87;
+      box-shadow: 0 0 20px rgba(0, 255, 135, 0.3);
+    }
+
+    .feature-card:hover .feature-icon-wrapper {
+      transform: scale(1.1);
     }
 
     .flow-steps {
@@ -348,21 +680,106 @@
     </div>
   </nav>
 
-  <!-- HERO SECTION -->
+  <!-- HERO SECTION WITH DYNAMIC GLASSMORPHIC MOCKUP -->
   <section class="hero-section">
-    <div class="hero-pill">⚡ CONNECT · VERIFY · UNITE</div>
-    <h1 class="hero-title">Build teams around <span>verified skills.</span></h1>
-    <p class="hero-subtitle">
-      Students discover complementary teammates, verify capabilities through adaptive 2-round AI assessments, and assemble elite project engineering teams.
-    </p>
+    <div class="hero-grid">
+      <!-- Left Column: Content, CTAs & Cryptographic Badge Graphic -->
+      <div>
+        <div class="hero-pill">⚡ CONNECT · VERIFY · UNITE</div>
+        <h1 class="hero-title">Build teams around <span>verified skills.</span></h1>
+        <p class="hero-subtitle">
+          Students discover complementary teammates, verify capabilities through adaptive 2-round AI assessments, and assemble elite project engineering teams.
+        </p>
 
-    <div class="hero-cta-group">
-      <a href="register.html" class="btn btn-primary" style="padding: 1rem 2.2rem; font-size: 1.05rem;">
-        Get Started / Register 🚀
-      </a>
-      <a href="teammates.html" class="btn btn-secondary" style="padding: 1rem 2.2rem; font-size: 1.05rem;">
-        Find Teammates 🔍
-      </a>
+        <div class="hero-cta-group">
+          <a href="register.html" class="btn btn-primary" style="padding: 1rem 2.2rem; font-size: 1.05rem;">
+            Get Started / Register 🚀
+          </a>
+          <a href="teammates.html" class="btn btn-secondary" style="padding: 1rem 2.2rem; font-size: 1.05rem;">
+            Find Teammates 🔍
+          </a>
+        </div>
+
+        <!-- Verified Skill Passport Badge Graphic (SHA-256) -->
+        <div class="passport-badge-graphic">
+          <div class="passport-badge-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#00FF87" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <div class="passport-badge-text">
+            <div class="passport-badge-title">CRYPTOGRAPHIC SHA-256 PASSPORT</div>
+            <div class="passport-badge-hash">SYNQ-0x9F3B21A77E4D • 100% Anti-Cheat Verified</div>
+          </div>
+          <div class="passport-badge-chip">VERIFIED</div>
+        </div>
+      </div>
+
+      <!-- Right Column: Glassmorphic Live AI Assessment Mockup -->
+      <div class="hero-mockup-wrapper">
+        <div class="hero-mockup-glow"></div>
+        <div class="hero-mockup-card">
+          <!-- Mockup Header -->
+          <div class="mockup-header">
+            <div class="mockup-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <div class="mockup-live-status">
+              <span class="live-pulse-dot"></span> LIVE AI ENGINE ACTIVE
+            </div>
+          </div>
+
+          <!-- Mockup Body -->
+          <div class="mockup-body">
+            <!-- Animated Round Progress Badge -->
+            <div class="mockup-round-badge">
+              <span>⚡ Live AI Assessment: Round 2</span>
+              <span class="timer-pill">08:42</span>
+            </div>
+
+            <!-- Code Scenario Snapshot -->
+            <div class="mockup-code-block">
+              <div class="mockup-code-header">
+                <span>spot_the_bug.py</span>
+                <span class="tag-meta">Amazon | 2026</span>
+              </div>
+              <pre><code><span class="c-k">def</span> <span class="c-f">solve_concurrency</span>(stream, cache):
+    <span class="c-k">if</span> cache.<span class="c-f">contains</span>(stream.id):
+        <span class="c-k">return</span> cache.<span class="c-f">fetch</span>()
+    <span class="c-c"># Spot Bug: Shared state mutation</span>
+    stream.<span class="c-f">sort_in_place</span>()</code></pre>
+            </div>
+
+            <!-- Quiz Option Selected State Preview -->
+            <div class="mockup-options-preview">
+              <div class="mockup-opt">A) SyntaxError on line 1</div>
+              <div class="mockup-opt active-opt">
+                <span>B) Thread-unsafe sort() mutation returns None</span>
+                <span class="check-mark">✓</span>
+              </div>
+            </div>
+
+            <!-- Live Score Preview Card -->
+            <div class="mockup-footer-score">
+              <div class="score-progress-label">
+                <span>Live Assessment Score</span>
+                <span class="score-pct">92% PASS (Top 1.0%)</span>
+              </div>
+              <div class="score-bar-bg">
+                <div class="score-bar-fill" style="width: 92%;"></div>
+              </div>
+              <div class="score-tags">
+                <span class="tag-sub">🛡️ 0 Proctoring Flags</span>
+                <span class="tag-sub">⚡ Realtime Latency 34ms</span>
+                <span class="tag-sub">🏆 Grade O Tier</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Live Protocol Metrics Banner -->
@@ -386,7 +803,7 @@
     </div>
   </section>
 
-  <!-- FEATURES SECTION -->
+  <!-- FEATURES SECTION WITH CRISP NEON SVG ICONS -->
   <section id="features" class="section-container">
     <div class="section-header">
       <h2 class="section-title">Engineered for Skill Transparency</h2>
@@ -394,43 +811,67 @@
     </div>
 
     <div class="features-grid">
+      <!-- Feature 1: Dynamic Question Engine -->
       <div class="feature-card">
         <div>
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          <div class="feature-icon-wrapper feature-icon-engine">
+            <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#00F0FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 6px #00F0FF);">
+              <rect x="4" y="4" width="16" height="16" rx="2" />
+              <rect x="9" y="9" width="6" height="6" />
+              <line x1="9" y1="1" x2="9" y2="4" />
+              <line x1="15" y1="1" x2="15" y2="4" />
+              <line x1="9" y1="20" x2="9" y2="23" />
+              <line x1="15" y1="20" x2="15" y2="23" />
+              <line x1="20" y1="9" x2="23" y2="9" />
+              <line x1="20" y1="14" x2="23" y2="14" />
+              <line x1="1" y1="9" x2="4" y2="9" />
+              <line x1="1" y1="14" x2="4" y2="14" />
+            </svg>
           </div>
-          <h3 style="font-size: 1.35rem; color: #FFFFFF; margin-bottom: 0.75rem;">2-Round AI Verification</h3>
-          <p style="color: #A0AEC0; line-height: 1.6; margin-bottom: 1.5rem;">
-            Rigorous dynamic screening covering technical concepts, code analysis, debugging, and industry scenario evaluations.
+          <h3 style="font-size: 1.35rem; color: #FFFFFF; margin-bottom: 0.75rem;">Dynamic Question Engine</h3>
+          <p style="color: #94A3B8; line-height: 1.6; margin-bottom: 1.5rem;">
+            Adaptive multi-model LLM question generator covering Spot-the-Bug scenarios, MCQs, True/False, and Manual Value predictions with zero question repetition.
           </p>
         </div>
         <a href="skills.html" class="btn btn-secondary" style="width: 100%;">Explore Verification →</a>
       </div>
 
+      <!-- Feature 2: Anti-Cheating Architecture -->
       <div class="feature-card">
         <div>
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <div class="feature-icon-wrapper feature-icon-shield">
+            <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#FF3366" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 6px #FF3366);">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <rect x="9" y="11" width="6" height="5" rx="1" />
+              <path d="M10 11V9a2 2 0 1 1 4 0v2" />
+            </svg>
           </div>
-          <h3 style="font-size: 1.35rem; color: #FFFFFF; margin-bottom: 0.75rem;">Explainable Matchmaking</h3>
-          <p style="color: #A0AEC0; line-height: 1.6; margin-bottom: 1.5rem;">
-            Discover candidates based on complementary skill gap analysis, verified proficiency scores, and role coverage.
+          <h3 style="font-size: 1.35rem; color: #FFFFFF; margin-bottom: 0.75rem;">Anti-Cheating Architecture</h3>
+          <p style="color: #94A3B8; line-height: 1.6; margin-bottom: 1.5rem;">
+            Hardened browser proctoring protocol intercepting tab switches, DevTools F12 source inspections, context menus, and unauthorized copy-paste shortcuts.
+          </p>
+        </div>
+        <a href="skills.html" class="btn btn-secondary" style="width: 100%;">View Proctoring Specs →</a>
+      </div>
+
+      <!-- Feature 3: Skill-Based Matchmaking -->
+      <div class="feature-card">
+        <div>
+          <div class="feature-icon-wrapper feature-icon-matchmaking">
+            <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#00FF87" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 6px #00FF87);">
+              <circle cx="18" cy="5" r="3" />
+              <circle cx="6" cy="12" r="3" />
+              <circle cx="18" cy="19" r="3" />
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+            </svg>
+          </div>
+          <h3 style="font-size: 1.35rem; color: #FFFFFF; margin-bottom: 0.75rem;">Skill-Based Matchmaking</h3>
+          <p style="color: #94A3B8; line-height: 1.6; margin-bottom: 1.5rem;">
+            Discover peer developers based on explainable skill gap compatibility, verified proficiency percentiles, and complementary hackathon project roles.
           </p>
         </div>
         <a href="teammates.html" class="btn btn-secondary" style="width: 100%;">Find Teammates →</a>
-      </div>
-
-      <div class="feature-card">
-        <div>
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          </div>
-          <h3 style="font-size: 1.35rem; color: #FFFFFF; margin-bottom: 0.75rem;">Connected Invites</h3>
-          <p style="color: #A0AEC0; line-height: 1.6; margin-bottom: 1.5rem;">
-            Send project recruitment invites, accept candidates, and automatically sync project rosters in real-time.
-          </p>
-        </div>
-        <a href="projects.html" class="btn btn-secondary" style="width: 100%;">Start Building →</a>
       </div>
     </div>
   </section>
@@ -446,31 +887,31 @@
       <div class="flow-step-card">
         <div class="step-num">01</div>
         <h4 style="color: #FFFFFF; margin-bottom: 0.4rem;">Profile Setup</h4>
-        <p style="font-size: 0.88rem; color: #A0AEC0;">Create your student developer profile.</p>
+        <p style="font-size: 0.88rem; color: #94A3B8;">Create your student developer profile.</p>
       </div>
 
       <div class="flow-step-card">
         <div class="step-num">02</div>
         <h4 style="color: #FFFFFF; margin-bottom: 0.4rem;">AI Verification</h4>
-        <p style="font-size: 0.88rem; color: #A0AEC0;">Pass 2-Round AI assessments to claim verified badges.</p>
+        <p style="font-size: 0.88rem; color: #94A3B8;">Pass 2-Round AI assessments to claim verified badges.</p>
       </div>
 
       <div class="flow-step-card">
         <div class="step-num">03</div>
         <h4 style="color: #FFFFFF; margin-bottom: 0.4rem;">Smart Matching</h4>
-        <p style="font-size: 0.88rem; color: #A0AEC0;">Filter teammates based on verified skill gap compatibility.</p>
+        <p style="font-size: 0.88rem; color: #94A3B8;">Filter teammates based on verified skill gap compatibility.</p>
       </div>
 
       <div class="flow-step-card">
         <div class="step-num">04</div>
         <h4 style="color: #FFFFFF; margin-bottom: 0.4rem;">Team Request</h4>
-        <p style="font-size: 0.88rem; color: #A0AEC0;">Dispatch project join invites to verified candidates.</p>
+        <p style="font-size: 0.88rem; color: #94A3B8;">Dispatch project join invites to verified candidates.</p>
       </div>
 
       <div class="flow-step-card">
         <div class="step-num">05</div>
         <h4 style="color: #FFFFFF; margin-bottom: 0.4rem;">Unite & Build</h4>
-        <p style="font-size: 0.88rem; color: #A0AEC0;">Form official team rosters and execute projects together.</p>
+        <p style="font-size: 0.88rem; color: #94A3B8;">Form official team rosters and execute projects together.</p>
       </div>
     </div>
   </section>
@@ -482,9 +923,9 @@
         <a href="index.html" class="brand-container">
           <span class="brand-text" style="font-size: 1.3rem;">SYNQORA</span>
         </a>
-        <p style="color: #64748B; font-size: 0.88rem; margin-top: 0.4rem;">Skill-Verified Synergy for Elite Student Teams.</p>
+        <p style="color: #94A3B8; font-size: 0.88rem; margin-top: 0.4rem;">Skill-Verified Synergy for Elite Student Teams.</p>
       </div>
-      <div style="color: #64748B; font-size: 0.88rem;">
+      <div style="color: #94A3B8; font-size: 0.88rem;">
         © 2026 Synqora Protocol. All rights reserved.
       </div>
     </div>

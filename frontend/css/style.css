@@ -15,7 +15,7 @@
 
   --text-primary: #FFFFFF;
   --text-secondary: #A0AEC0;
-  --text-muted: #64748B;
+  --text-muted: #94A3B8;
 
   --accent-cyan: #00F0FF;
   --accent-cyan-glow: rgba(0, 240, 255, 0.35);
@@ -410,3 +410,13 @@ body {
     padding: 1.25rem !important;
   }
 }
+
+/* =========================================================
+   CHANGE 8: OBSIDIAN CYBER DARK CONTRAST & SELECTED STATE FIX
+   ========================================================= */
+.quiz-option.selected, .option-card.selected, .option-item.selected {
+  border-color: #6366F1 !important;
+  background: rgba(99, 102, 241, 0.15) !important;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.3) !important;
+}
+

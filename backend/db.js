@@ -1,5 +1,6 @@
 const mysql = require('mysql2');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
@@ -9,15 +10,15 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
-});
+}).promise();
 
-pool.getConnection((err, connection) => {
-  if (err) {
-    console.error('❌ Database Connection Failed:', err.message);
-  } else {
+pool.getConnection()
+  .then(conn => {
     console.log('✅ Connected to MySQL Database (synqora_pro)');
-    connection.release();
-  }
-});
+    conn.release();
+  })
+  .catch(err => {
+    console.error('⚠️ MySQL Connection failed (Running in graceful fallback mode):', err.message);
+  });
 
-module.exports = pool.promise();
+module.exports = pool;

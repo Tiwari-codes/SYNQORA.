@@ -4,12 +4,25 @@
    Passport Generator, Custom Skills, Page Routing & Admin Role.
    ============================================================ */
 
+// 1. Session Expiry & Route Guard Logic (Change 7)
+function verifySession() {
+  const token = localStorage.getItem('synqora_token');
+  const publicPages = ['login.html', 'register.html', 'index.html'];
+  const currentPage = window.location.pathname.split('/').pop();
+  if (!token && !publicPages.includes(currentPage) && currentPage !== '') {
+    window.location.href = 'login.html';
+  }
+}
+verifySession();
+
+// 2. Dynamic API URL Centralization (Change 5)
+const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 const API_BASE_URL = (typeof CONFIG !== 'undefined' && CONFIG.FASTAPI_BASE) 
   ? CONFIG.FASTAPI_BASE 
-  : "http://127.0.0.1:8000/api";
+  : (isLocal ? "http://localhost:8000/api" : "/ai-api");
 const NODE_API_BASE = (typeof CONFIG !== 'undefined' && CONFIG.NODE_API_BASE)
   ? CONFIG.NODE_API_BASE
-  : "http://localhost:5000/api";
+  : (isLocal ? "http://localhost:5000/api" : "/api");
 
 // GLOBAL STATE
 const urlParams = new URLSearchParams(window.location.search);
@@ -24,6 +37,51 @@ let correctAnswersCount = 0;
 let timeInSeconds = 600;
 let countdownTimer = null;
 let warningCount = 0;
+
+// Anti-Cheating Violation Handler (Change 6)
+function recordCheatAttempt(reason) {
+  warningCount++;
+  console.warn(`[ANTI-CHEAT WARNING ${warningCount}/3]:`, reason);
+
+  const warningCountText = document.getElementById('warningCountText');
+  if (warningCountText) warningCountText.innerText = warningCount;
+
+  const warningModal = document.getElementById('warningModal');
+  if (warningModal) {
+    const p = warningModal.querySelector('p');
+    if (p) {
+      p.innerHTML = `<span style="color:#FF3366; font-weight:bold;">Violation Detected:</span> ${reason}.<br>Inspections or leaving the assessment screen will invalidate your score.`;
+    }
+    warningModal.style.display = 'flex';
+  } else {
+    alert(`⚠️ Proctoring Violation: ${reason}! (Warning ${warningCount}/3)`);
+  }
+
+  if (warningCount >= 3) {
+    alert('❌ Test Terminated! Multiple security/anti-cheating violations detected. Score: 0');
+    window.location.href = 'skills.html';
+  }
+}
+
+// Anti-Cheating Protocol Hardening (Change 6)
+document.addEventListener('keydown', (e) => {
+  if (
+    e.key === 'F12' || 
+    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || 
+    (e.ctrlKey && e.key === 'u')
+  ) {
+    e.preventDefault();
+    if (typeof recordCheatAttempt === 'function') {
+      recordCheatAttempt("DevTools / Source inspection attempt detected");
+    }
+  }
+});
+
+document.addEventListener('contextmenu', (e) => {
+  if (document.getElementById('quiz-screen') || document.getElementById('quizWrapperContainer') || window.location.pathname.includes('test-runner')) {
+    e.preventDefault();
+  }
+});
 
 // PAGE ROUTER & GLOBAL DOM LOAD
 document.addEventListener('DOMContentLoaded', () => {
@@ -99,14 +157,36 @@ async function fetchQuestionsFromBackend(skill, round) {
   }
 }
 
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function selectOptionByKey(optKey) {
+  const key = String(optKey || 'A').trim().toUpperCase().charAt(0);
+  selectedAnswer = key;
+
+  const items = document.querySelectorAll('.option-item, .quiz-option, .option-card');
+  items.forEach(el => {
+    if (el.getAttribute('data-key') === key) {
+      el.classList.add('selected');
+      const radio = el.querySelector('input[type="radio"]');
+      if (radio) radio.checked = true;
+    } else {
+      el.classList.remove('selected');
+      const radio = el.querySelector('input[type="radio"]');
+      if (radio) radio.checked = false;
+    }
+  });
+}
+
 function selectOptionCard(element, userVal, optionKey) {
-  document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
-  element.classList.add('selected');
-
-  const radio = element.querySelector('input[type="radio"]');
-  if (radio) radio.checked = true;
-
-  selectedAnswer = optionKey || userVal;
+  selectOptionByKey(optionKey || userVal);
 }
 
 function formatQuestionWithCode(rawText) {
@@ -147,6 +227,10 @@ function formatQuestionWithCode(rawText) {
   `;
 }
 
+function handleManualInput(val) {
+  selectedAnswer = String(val || '').trim();
+}
+
 function renderCurrentQuestion() {
   selectedAnswer = null;
 
@@ -156,49 +240,108 @@ function renderCurrentQuestion() {
   }
   
   const q = activeQuestions[questionIndex - 1] || activeQuestions[0];
+  const qType = String(q.type || 'Standard MCQ').trim();
   const companyTag = document.getElementById('companyTag');
   const typeTag = document.getElementById('typeTag');
   const contentBox = document.getElementById('questionContentBox');
   const optionsContainer = document.getElementById('optionsContainer');
 
-  if (companyTag) companyTag.innerText = `🏢 ${q.company_tag || 'Amazon | 2025'}`;
-  if (typeTag) typeTag.innerText = `🏷️ Type: ${q.type || 'Standard MCQ'}`;
-  if (contentBox) contentBox.innerHTML = formatQuestionWithCode(q.question);
+  if (companyTag) companyTag.innerText = `🏢 ${q.company_tag || 'Amazon | 2026'}`;
+  
+  if (typeTag) {
+    if (qType === 'Manual Fill-In') {
+      typeTag.innerHTML = `⌨️ Type: Manual Fill-In`;
+    } else if (qType === 'True / False') {
+      typeTag.innerHTML = `⚖️ Type: True / False`;
+    } else if (qType === 'Spot the Bug') {
+      typeTag.innerHTML = `🐛 Type: Spot the Bug`;
+    } else if (qType === 'Complete the Statement') {
+      typeTag.innerHTML = `🧩 Type: Complete the Statement`;
+    } else {
+      typeTag.innerHTML = `📋 Type: Standard MCQ`;
+    }
+  }
 
+  if (contentBox) contentBox.innerHTML = formatQuestionWithCode(q.question);
   if (!optionsContainer) return;
+
+  // 1. MANUAL FILL-IN
+  if (qType === 'Manual Fill-In') {
+    optionsContainer.innerHTML = `
+      <div style="background: #090D16; border: 1px solid #24324D; border-radius: 14px; padding: 1.5rem; margin-top: 0.5rem;">
+        <label style="display: flex; align-items: center; gap: 0.5rem; color: #00F0FF; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.75rem;">
+          <span>⌨️</span> <span>Enter your predicted output or answer:</span>
+        </label>
+        <input 
+          type="text" 
+          id="manualAnswerInput" 
+          class="manual-input-field" 
+          placeholder="e.g. O(1), 200, True, or return value" 
+          oninput="handleManualInput(this.value)"
+          onkeydown="if(event.key === 'Enter') handleNextQuestion()"
+          autocomplete="off"
+          spellcheck="false"
+          style="margin-bottom: 0.75rem;"
+        />
+      </div>
+    `;
+    setTimeout(() => {
+      const input = document.getElementById('manualAnswerInput');
+      if (input) input.focus();
+    }, 100);
+    return;
+  }
   
   let cleanOptions = (q.options || []).filter(opt => {
     const clean = String(opt).replace(/\\n/g, ' ').trim();
-    return clean !== 'correct_answer' && clean !== ':' && clean !== 'A' && clean !== 'B' && clean !== 'C' && clean !== 'D';
+    return clean.length > 0 && clean.toLowerCase() !== 'correct_answer';
   });
 
-  if (q.type === 'True / False' || q.type === 'True/False') {
+  const isTrueFalse = qType === 'True / False' || (cleanOptions.length === 2 && cleanOptions.some(o => /true|false/i.test(o)));
+
+  // 2. TRUE / FALSE
+  if (isTrueFalse) {
     optionsContainer.innerHTML = `
-      <div class="option-item" onclick="selectOptionCard(this, 'TRUE', 'A')">
-        <input type="radio" name="tf" id="tf1" value="A">
-        <label for="tf1" style="color:#FFF; cursor:pointer;">A) TRUE</label>
+      <div class="option-item ${selectedAnswer === 'A' ? 'selected' : ''}" data-key="A" onclick="selectOptionByKey('A')" style="border-left: 4px solid #00FF87;">
+        <input type="radio" name="mcq_option" id="tf1" value="A" ${selectedAnswer === 'A' ? 'checked' : ''} style="pointer-events: none;">
+        <label style="color:#FFF; cursor:pointer; pointer-events: none; width: 100%; font-weight: 700;">A) TRUE</label>
       </div>
-      <div class="option-item" onclick="selectOptionCard(this, 'FALSE', 'B')">
-        <input type="radio" name="tf" id="tf2" value="B">
-        <label for="tf2" style="color:#FFF; cursor:pointer;">B) FALSE</label>
+      <div class="option-item ${selectedAnswer === 'B' ? 'selected' : ''}" data-key="B" onclick="selectOptionByKey('B')" style="border-left: 4px solid #FF3366;">
+        <input type="radio" name="mcq_option" id="tf2" value="B" ${selectedAnswer === 'B' ? 'checked' : ''} style="pointer-events: none;">
+        <label style="color:#FFF; cursor:pointer; pointer-events: none; width: 100%; font-weight: 700;">B) FALSE</label>
       </div>
     `;
-  } else if (q.type === 'Manual Fill-In' || cleanOptions.length === 0) {
-    optionsContainer.innerHTML = `
-      <label style="color: #A0AEC0; font-size: 0.85rem; font-weight: 700;">Type your exact value/answer:</label>
-      <input type="text" class="manual-input-field" placeholder="e.g. O(1)" id="manualFillAns" oninput="selectedAnswer = this.value.trim();">
-    `;
-  } else {
-    optionsContainer.innerHTML = cleanOptions.map((opt, idx) => {
-      const optKey = String(opt).trim().charAt(0);
-      return `
-        <div class="option-item" onclick="selectOptionCard(this, '${String(opt).replace(/'/g, "\\'")}', '${optKey}')">
-          <input type="radio" name="mcq" id="opt${idx}" value="${optKey}">
-          <label for="opt${idx}" style="color:#FFF; cursor:pointer;">${opt}</label>
-        </div>
-      `;
-    }).join('');
+    return;
   }
+
+  // 3, 4, 5. SPOT THE BUG, COMPLETE STATEMENT, MCQ
+  if (cleanOptions.length < 2) {
+    cleanOptions = [
+      `A) Optimal ${currentSkill} Pattern`,
+      `B) Linear scan sub-optimal approach`,
+      `C) SyntaxError / Invalid Reference`,
+      `D) Memory limit exceeded`
+    ];
+  }
+
+  const letters = ['A', 'B', 'C', 'D'];
+  optionsContainer.innerHTML = cleanOptions.slice(0, 4).map((opt, idx) => {
+    const optStr = String(opt).trim();
+    const match = optStr.match(/^[A-D]/i);
+    const optKey = match ? match[0].toUpperCase() : (letters[idx] || 'A');
+    const isSelected = selectedAnswer === optKey;
+
+    let borderStyle = '';
+    if (qType === 'Spot the Bug') borderStyle = 'border-left: 4px solid #FB923C;';
+    else if (qType === 'Complete the Statement') borderStyle = 'border-left: 4px solid #38BDF8;';
+
+    return `
+      <div class="option-item ${isSelected ? 'selected' : ''}" data-key="${optKey}" onclick="selectOptionByKey('${optKey}')" style="${borderStyle}">
+        <input type="radio" name="mcq_option" id="opt_${idx}" value="${optKey}" ${isSelected ? 'checked' : ''} style="pointer-events: none;">
+        <label style="color:#FFF; cursor:pointer; pointer-events: none; width: 100%; font-weight: 600;">${escapeHtml(optStr)}</label>
+      </div>
+    `;
+  }).join('');
 }
 
 function renderFallbackQuestion() {
@@ -207,36 +350,69 @@ function renderFallbackQuestion() {
   const contentBox = document.getElementById('questionContentBox');
   if (!optionsContainer || !contentBox) return;
 
-  if (questionIndex === 1) {
-    document.getElementById('companyTag').innerText = '🏢 Amazon | 2025 • Technical Assessment';
-    document.getElementById('typeTag').innerText = '🏷️ Type: Standard MCQ';
-    contentBox.innerHTML = formatQuestionWithCode(`Which data structure in ${currentSkill} operates on key-value pairs with O(1) average lookup complexity?`);
-    
-    optionsContainer.innerHTML = `
-      <div class="option-item" onclick="selectOptionCard(this, 'List', 'A')"><input type="radio" name="mcq" id="o1"><label for="o1" style="color:#FFF;">A) List / Array</label></div>
-      <div class="option-item" onclick="selectOptionCard(this, 'Hash Table', 'B')"><input type="radio" name="mcq" id="o2"><label for="o2" style="color:#FFF;">B) Hash Table / Dictionary</label></div>
-      <div class="option-item" onclick="selectOptionCard(this, 'Queue', 'C')"><input type="radio" name="mcq" id="o3"><label for="o3" style="color:#FFF;">C) Queue</label></div>
-    `;
-  } else {
-    document.getElementById('companyTag').innerText = '🏢 Google | 2024 • Technical Assessment';
-    document.getElementById('typeTag').innerText = '🏷️ Type: True / False Statement';
-    contentBox.innerHTML = formatQuestionWithCode(`True or False: Primitive immutable types in ${currentSkill} allow value mutation after initial allocation.`);
-    
-    optionsContainer.innerHTML = `
-      <div class="option-item" onclick="selectOptionCard(this, 'TRUE', 'A')"><input type="radio" name="tf" id="tf1"><label for="tf1" style="color:#FFF;">A) TRUE</label></div>
-      <div class="option-item" onclick="selectOptionCard(this, 'FALSE', 'B')"><input type="radio" name="tf" id="tf2"><label for="tf2" style="color:#FFF;">B) FALSE (Immutable Objects)</label></div>
-    `;
-  }
+  const fallbackSuite = [
+    {
+      type: "Standard MCQ",
+      company_tag: "Amazon | 2026",
+      question: `Which data structure in ${currentSkill} operates on key-value pairs with O(1) average lookup complexity?`,
+      options: ["A) Hash Table / Dictionary", "B) Linear Unsorted Array", "C) Singly Linked List", "D) FIFO Queue"],
+      correct_answer: "A"
+    },
+    {
+      type: "True / False",
+      company_tag: "Google | 2026",
+      question: `True or False: Primitive immutable types in ${currentSkill} allow value mutation after initial allocation.`,
+      options: ["A) TRUE", "B) FALSE"],
+      correct_answer: "B"
+    },
+    {
+      type: "Spot the Bug",
+      company_tag: "Microsoft | 2026",
+      question: `Identify the error when accessing index 3 in a 3-element list:\n\nitems = [10, 20, 30]\nval = items[3]`,
+      options: ["A) IndexError: out of bounds", "B) SyntaxError", "C) Null pointer", "D) Memory overflow"],
+      correct_answer: "A"
+    },
+    {
+      type: "Complete the Statement",
+      company_tag: "Atlassian | 2026",
+      question: `To protect shared mutable state from race conditions, threads acquire a ____ lock.`,
+      options: ["A) Mutex", "B) Virtual Memory", "C) GC handle", "D) Stack Frame"],
+      correct_answer: "A"
+    },
+    {
+      type: "Manual Fill-In",
+      company_tag: "Uber | 2026",
+      question: `What is the average time complexity (in Big-O notation, e.g. O(1)) for hash-indexed lookups in ${currentSkill}?`,
+      options: [],
+      correct_answer: "O(1)"
+    }
+  ];
+
+  const item = fallbackSuite[(questionIndex - 1) % fallbackSuite.length];
+  activeQuestions = fallbackSuite;
+  renderCurrentQuestion();
 }
 
 function recordAnswerScore() {
   const q = activeQuestions[questionIndex - 1];
-  const correctAns = q ? (q.correct_answer || 'B').trim().toUpperCase() : 'B';
-  const userAns = (selectedAnswer || '').trim().toUpperCase();
+  if (!q) return;
 
-  const isCorrect = userAns.startsWith(correctAns) || userAns === correctAns;
-  if (isCorrect) {
-    correctAnswersCount++;
+  const userAns = String(selectedAnswer || '').trim();
+  const correctAns = String(q.correct_answer || 'A').trim();
+
+  if (q.type === 'Manual Fill-In') {
+    const sanitize = (s) => String(s).toLowerCase().replace(/['"`;\s]/g, '');
+    const cleanUser = sanitize(userAns);
+    const cleanCorrect = sanitize(correctAns);
+    if (cleanUser && (cleanUser === cleanCorrect || cleanCorrect.includes(cleanUser) || cleanUser.includes(cleanCorrect))) {
+      correctAnswersCount++;
+    }
+  } else {
+    const correctLetter = correctAns.toUpperCase().charAt(0);
+    const userLetter = userAns.toUpperCase().charAt(0);
+    if (userLetter && userLetter === correctLetter) {
+      correctAnswersCount++;
+    }
   }
 }
 
@@ -384,25 +560,17 @@ function triggerGrandCelebration() {
 
 function setupProctoring() {
   window.addEventListener('blur', () => {
-    const warningModal = document.getElementById('warningModal');
-    const warningCountText = document.getElementById('warningCountText');
-
-    if (warningModal && warningCountText) {
-      warningCount++;
-      warningCountText.innerText = warningCount;
-      warningModal.style.display = 'flex';
-
-      if (warningCount >= 3) {
-        alert('❌ Test Terminated! Multiple tab switches detected. Score: 0');
-        window.location.href = 'skills.html';
-      }
+    if (typeof recordCheatAttempt === 'function') {
+      recordCheatAttempt("Tab switch or focus lost");
     }
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'u' || e.key === 'i')) {
+    if (e.ctrlKey && (e.key === 'c' || e.key === 'v')) {
       e.preventDefault();
-      alert('Copying & DevShortcuts are disabled during Synqora Proctoring!');
+      if (typeof recordCheatAttempt === 'function') {
+        recordCheatAttempt("Clipboard copy/paste blocked");
+      }
     }
   });
 }
@@ -551,7 +719,6 @@ function saveNewSkill() {
         </div>
       </div>
     `;
-    
 
     grid.insertAdjacentHTML('beforeend', cardHtml);
   }

@@ -22,6 +22,14 @@ let JWT_SECRET = process.env.JWT_SECRET;
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
 
+// Graceful process crash guards
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('⚠️ Unhandled Rejection at:', promise, 'reason:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('⚠️ Uncaught Exception caught safely:', err.message);
+});
+
 if (!JWT_SECRET || JWT_SECRET.length < 32) {
   console.warn(
     'WARNING: JWT_SECRET invalid ya missing hai! Development fallback key use ki ja rahi hai...'
@@ -468,63 +476,63 @@ app.get('/api/auth/me', requireAuth, async (req, res) => {
 
 
 // ==========================================
-// 7B. DYNAMIC AI QUESTIONS ROUTE (GROQ + 10-QUESTION FALLBACK)
+// 7B. DYNAMIC AI QUESTIONS ROUTE (GROQ + 10-QUESTION FALLBACK WITH 5 DIVERSE TYPES)
 // ==========================================
 function getFallbackQuestions(skillName, roundNum) {
-  const suite = [
+  return [
     {
       id: 1,
       type: "Standard MCQ",
       company_tag: "Amazon | 2026",
-      question: `Which core data structure or paradigm in ${skillName} provides O(1) average time complexity for key-based lookups?`,
+      question: `Which core data structure in ${skillName} provides O(1) average time complexity for key-based lookups?`,
       options: ["A) Hash Table / Dictionary", "B) Linear Unsorted Array", "C) Singly Linked List", "D) FIFO Queue"],
       correct_answer: "A"
     },
     {
       id: 2,
-      type: "Manual Fill-In",
-      company_tag: "Google | 2025",
-      question: `What is the average time complexity (in Big-O notation, e.g., O(1) or O(n)) for direct hash-indexed lookup in ${skillName}?`,
-      options: [],
-      correct_answer: "O(1)"
-    },
-    {
-      id: 3,
       type: "True / False",
-      company_tag: "Microsoft | 2026",
-      question: `True or False: In ${skillName}, immutable primitive or tuple-like objects allow in-place memory mutation after creation.`,
+      company_tag: "Google | 2026",
+      question: `True or False: In ${skillName}, immutable primitive objects allow in-place memory mutation after initial creation.`,
       options: ["A) TRUE", "B) FALSE"],
       correct_answer: "B"
     },
     {
-      id: 4,
+      id: 3,
       type: "Spot the Bug",
-      company_tag: "Atlassian | 2025",
+      company_tag: "Microsoft | 2026",
       question: `Identify the error when accessing the 4th element in a 0-indexed collection of size 3 in ${skillName}:\n\nitems = [10, 20, 30]\nval = items[3]`,
-      options: ["A) IndexError / Out of Bounds", "B) SyntaxError", "C) NullPointerException on line 1", "D) StackOverflowError"],
+      options: ["A) IndexError: list index out of range", "B) SyntaxError on line 1", "C) Memory Leak Warning", "D) StackOverflowError"],
+      correct_answer: "A"
+    },
+    {
+      id: 4,
+      type: "Complete the Statement",
+      company_tag: "Atlassian | 2026",
+      question: `To prevent race conditions during concurrent access to shared state in ${skillName}, developers use a ____ lock.`,
+      options: ["A) Mutex / Semaphore", "B) Virtual Memory", "C) Garbage Collection", "D) Buffer Overflow"],
       correct_answer: "A"
     },
     {
       id: 5,
-      type: "Standard MCQ",
+      type: "Manual Fill-In",
       company_tag: "Uber | 2026",
-      question: `When optimizing ${skillName} applications for high concurrency, which technique prevents race conditions on shared state?`,
-      options: ["A) Busy waiting without locks", "B) Mutex Locks / Atomic Operations", "C) Global unguarded variables", "D) Disabling garbage collection"],
-      correct_answer: "B"
+      question: `What is the average time complexity (in Big-O notation, e.g. O(1) or O(n)) for hash-indexed lookup in ${skillName}?`,
+      options: [],
+      correct_answer: "O(1)"
     },
     {
       id: 6,
       type: "Standard MCQ",
       company_tag: "Flipkart | 2025",
       question: `What is the worst-case time complexity of Binary Search on a sorted array of N elements in ${skillName}?`,
-      options: ["A) O(N)", "B) O(N log N)", "C) O(log N)", "D) O(1)"],
-      correct_answer: "C"
+      options: ["A) O(log N)", "B) O(N)", "C) O(N log N)", "D) O(1)"],
+      correct_answer: "A"
     },
     {
       id: 7,
       type: "True / False",
       company_tag: "Stripe | 2026",
-      question: `True or False: Recursion without a valid termination base case leads to a Stack Overflow / RecursionError in ${skillName}.`,
+      question: `True or False: A recursive function without a valid termination base case will trigger a Stack Overflow in ${skillName}.`,
       options: ["A) TRUE", "B) FALSE"],
       correct_answer: "A"
     },
@@ -533,27 +541,26 @@ function getFallbackQuestions(skillName, roundNum) {
       type: "Spot the Bug",
       company_tag: "Zomato | 2025",
       question: `What is the logical issue in the following loop condition?\n\ncount = 10\nwhile count > 0:\n    count += 1`,
-      options: ["A) Infinite loop because count increases instead of decreasing", "B) SyntaxError in while header", "C) Variable count is undefined", "D) Loop executes zero times"],
+      options: ["A) Infinite loop because count increases instead of decreasing", "B) SyntaxError in while loop header", "C) Variable count is undefined", "D) Loop terminates immediately"],
       correct_answer: "A"
     },
     {
       id: 9,
-      type: "Manual Fill-In",
-      company_tag: "TCS Digital | 2026",
-      question: `Which HTTP status code number represents 'OK / Success' in RESTful APIs built with ${skillName}?`,
-      options: [],
-      correct_answer: "200"
+      type: "Complete the Statement",
+      company_tag: "Razorpay | 2026",
+      question: `The software design principle stating that a class or module should have only one reason to change is the ____ Principle.`,
+      options: ["A) Single Responsibility (SRP)", "B) Open Closed (OCP)", "C) Liskov Substitution (LSP)", "D) Interface Segregation (ISP)"],
+      correct_answer: "A"
     },
     {
       id: 10,
-      type: "Standard MCQ",
-      company_tag: "Razorpay | 2026",
-      question: `Which principle of software design in ${skillName} states that a class or module should have only one reason to change?`,
-      options: ["A) Single Responsibility Principle (SRP)", "B) Liskov Substitution Principle", "C) Premature Optimization", "D) Tight Coupling"],
-      correct_answer: "A"
+      type: "Manual Fill-In",
+      company_tag: "TCS Digital | 2026",
+      question: `Which HTTP status code number represents 'OK / Success' in REST APIs built with ${skillName}?`,
+      options: [],
+      correct_answer: "200"
     }
   ];
-  return suite.sort(() => Math.random() - 0.5);
 }
 
 app.get('/api/questions', async (req, res) => {
@@ -566,14 +573,15 @@ app.get('/api/questions', async (req, res) => {
   }
 
   const prompt = `You are Synqora's AI Assessment Engine. Generate 10 fresh, non-repeating technical assessment questions for the skill: '${skill}' (Round ${round}).
-  STRICT QUESTION TYPE DISTRIBUTION:
-  - 4 Standard MCQs (4 options starting with A), B), C), D))
+  STRICT 5 QUESTION TYPE DISTRIBUTION:
+  - 2 Standard MCQs (4 options starting with A), B), C), D))
   - 2 True / False questions (options: ["A) TRUE", "B) FALSE"])
-  - 2 Manual Fill-In / Value Output prediction questions (options: [])
-  - 2 Debugging / Spot the Bug scenarios (4 options starting with A), B), C), D))
-  Output MUST be a valid JSON object containing a "questions" array of 10 items with keys: id, type, company_tag, question, options, correct_answer.`;
+  - 2 Spot the Bug / Error Finder scenarios (4 options starting with A), B), C), D))
+  - 2 Complete the Statement questions with '____' blank (4 options starting with A), B), C), D))
+  - 2 Manual Fill-In questions (options: [], correct_answer: exact string like "O(1)" or "200" or output)
+  Output strictly valid JSON with root key "questions", containing 10 objects: id, type, company_tag, question, options, correct_answer.`;
 
-  const models = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"];
+  const models = ["openai/gpt-oss-20b", "openai/gpt-oss-120b", "qwen/qwen3.8-27b"];
   for (const model of models) {
     try {
       const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -584,20 +592,41 @@ app.get('/api/questions', async (req, res) => {
         },
         body: JSON.stringify({
           model,
-          temperature: 0.4,
-          response_format: { type: "json_object" },
+          temperature: 0.3,
+          max_tokens: 2400,
           messages: [
-            { role: "system", content: "Output ONLY valid JSON containing a 'questions' array of 10 technical assessment questions." },
+            { role: "system", content: "You are Synqora's AI Assessment Generator. Output strictly raw JSON with root key 'questions'." },
             { role: "user", content: prompt }
           ]
         })
       });
       if (response.ok) {
         const result = await response.json();
-        const content = JSON.parse(result.choices[0].message.content);
+        let rawContent = result.choices[0].message.content.trim();
+        rawContent = rawContent.replace(/^```(?:json)?\s*|\s*```$/g, '').trim();
+        const content = JSON.parse(rawContent);
         const list = content.questions || content.data || Object.values(content)[0];
         if (Array.isArray(list) && list.length >= 5) {
-          return res.json(list);
+          // Normalize and guarantee types
+          const normalized = list.map((item, idx) => {
+            const rawType = String(item.type || 'Standard MCQ').toLowerCase();
+            if (rawType.includes('manual') || rawType.includes('fill')) {
+              item.type = 'Manual Fill-In';
+              item.options = [];
+            } else if (rawType.includes('true') || rawType.includes('false')) {
+              item.type = 'True / False';
+              item.options = ["A) TRUE", "B) FALSE"];
+            } else if (rawType.includes('bug') || rawType.includes('error')) {
+              item.type = 'Spot the Bug';
+            } else if (rawType.includes('complete') || rawType.includes('statement')) {
+              item.type = 'Complete the Statement';
+            } else {
+              item.type = 'Standard MCQ';
+            }
+            item.id = idx + 1;
+            return item;
+          });
+          return res.json(normalized);
         }
       }
     } catch (err) {
@@ -832,6 +861,70 @@ app.post(
     }
   }
 );
+
+// ==========================================
+// 9B. INTERNAL SYNC ASSESSMENT ROUTE (FROM FASTAPI AI ENGINE)
+// ==========================================
+async function handleSyncAssessment(req, res) {
+  try {
+    const { user_id, skill, score, hash } = req.body;
+    const userId = Number(user_id) || 1;
+    const scoreVal = Number(score) || 0;
+    const skillName = String(skill || 'General Technical').trim();
+    const hashKey = String(hash || `SYNQ-0x${crypto.randomBytes(8).toString('hex').toUpperCase()}`);
+
+    let grade = 'Grade B';
+    let rosterRank = 'Top 25.0%';
+
+    if (scoreVal >= 90) {
+      grade = 'Grade O';
+      rosterRank = 'Top 1.0%';
+    } else if (scoreVal >= 80) {
+      grade = 'Grade A+';
+      rosterRank = 'Top 2.5%';
+    } else if (scoreVal >= 70) {
+      grade = 'Grade A';
+      rosterRank = 'Top 10.0%';
+    }
+
+    // Ensure skill exists in DB
+    let targetSkillId = 1;
+    try {
+      const [existing] = await db.execute('SELECT id FROM skills WHERE skill_name = ? LIMIT 1', [skillName]);
+      if (existing.length > 0) {
+        targetSkillId = existing[0].id;
+      } else {
+        const [inserted] = await db.execute('INSERT INTO skills (skill_name, category) VALUES (?, ?)', [skillName, 'Technical']);
+        targetSkillId = inserted.insertId;
+      }
+    } catch (e) {
+      console.warn('⚠️ Skill lookup/create fallback in sync:', e.message);
+    }
+
+    // Insert user assessment
+    try {
+      await db.execute(`
+        INSERT INTO user_assessments (user_id, skill_id, score_percentage, grade, roster_rank, proctoring_status, hash_key)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `, [userId, targetSkillId, scoreVal, grade, rosterRank, '100% Clean', hashKey]);
+      console.log(`✅ [SYNC-SUCCESS] Assessment synced for user ${userId}, skill: ${skillName}, score: ${scoreVal}%`);
+    } catch (dbErr) {
+      console.warn('⚠️ Assessment insert warning during sync (DB might be offline or duplicate hash):', dbErr.message);
+    }
+
+    return res.json({
+      success: true,
+      message: 'Assessment score synchronized successfully with user profile',
+      hash: hashKey
+    });
+  } catch (error) {
+    console.error('⚠️ Internal Sync Assessment Error:', error.message);
+    return res.status(500).json({ success: false, message: 'Sync failed: ' + error.message });
+  }
+}
+
+app.post('/api/internal/sync-assessment', handleSyncAssessment);
+app.post('/api/users/update-skill-score', handleSyncAssessment);
 
 // ==========================================
 // 10. GET USER PROFILE & PASSPORTS
